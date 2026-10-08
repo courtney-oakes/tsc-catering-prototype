@@ -1,0 +1,673 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TSC Catering Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+@font-face{font-family:'Sway Display';src:url('fonts/SwayDisplay-Regular.woff2') format('woff2');font-weight:400;font-style:normal;font-display:swap}
+@font-face{font-family:'Sway Display';src:url('fonts/SwayDisplay-Bold.woff2') format('woff2');font-weight:700;font-style:normal;font-display:swap}
+@font-face{font-family:'Sway Display';src:url('fonts/SwayDisplay-ExtraBold.woff2') format('woff2');font-weight:800;font-style:normal;font-display:swap}
+/* TSC Full Brand ID DLS tokens (resolved from Figma file SfmAJxAmLVxmT7RxYslkGM, Tokens collection) */
+:root{
+--bg:#FFFEF3;--container:#FFF4E3;--surface:#FCFAEB;--surface-strong:#F3F1DE;--border:#F3F1DE;--border-strong:#F4F0D9;--border-stronger:#D1D6CF;
+--ink:#153624;--ink-pressed:#0F2419;--ink-2:#747474;--inverse:#FFFEF3;--inverse-pressed:#F4F0D9;--disabled:#D1D6CF;
+--action:#FF6F00;--action-pressed:#CE4900;--action-soft:#FFEEDF;--support-soft:#EAF5F0;--frond:#55D88E;
+--err:#BC1612;--err-bg:#FFE8E6;--warn:#DA4D1E;--warn-bg:#FFFBE9;--ok:#3C9232;--ok-bg:#EEFFE3;--info:#386FC4;--info-bg:#EAF3FF;
+--overlay:rgba(21,54,36,.65);
+--r-sm:4px;--r-md:8px;--r-lg:12px;--r-xl:16px;--r-2xl:24px;--r-full:500px;
+--f-brand:'Sway Display',system-ui,-apple-system,'Segoe UI',sans-serif;--f-body:'Inter',system-ui,-apple-system,Segoe UI,Arial,sans-serif;
+/* legacy aliases used by inline markup */
+--g0:var(--bg);--g1:var(--surface);--g2:var(--surface-strong);--g3:var(--border-stronger);--g4:var(--border-stronger);--g5:var(--ink-2);--g6:var(--ink);--g7:var(--ink)}
+*{box-sizing:border-box}
+body{margin:0;font-family:var(--f-body);font-size:14px;line-height:1.45;color:var(--ink);background:var(--bg)}
+h1,h2,h3{margin:0 0 8px;font-family:var(--f-brand);font-weight:800;letter-spacing:-.005em}
+h4{margin:0 0 8px;font-family:var(--f-body);font-weight:500;font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2)}
+h1{font-size:32px;line-height:34px}h2{font-size:20px;line-height:24px}h3{font-size:16px;line-height:20px;font-weight:700}
+p{margin:0 0 8px}a{color:inherit}
+button,input,select,textarea{font:inherit;color:inherit}
+.wrap{max-width:1200px;margin:0 auto;padding:0 20px}
+.row{display:flex;gap:12px;align-items:center;flex-wrap:wrap}.between{justify-content:space-between}
+.col{display:flex;flex-direction:column;gap:8px}.grow{flex:1}
+.muted{color:var(--ink-2)}.small{font-size:12px}.bold{font-weight:600}.right{text-align:right}
+hr{border:0;border-top:1px solid var(--border-stronger);margin:14px 0}
+/* top nav */
+.top{border-bottom:2px solid var(--border);background:var(--bg)}
+.top .wrap{display:flex;align-items:center;gap:20px;height:72px}
+.logo{display:flex;align-items:center;gap:8px;cursor:pointer;font-family:var(--f-brand);font-weight:800;font-size:15px;line-height:15px;color:var(--ink);white-space:nowrap}
+.logo i{display:block;width:34px;height:34px;border-radius:var(--r-full);background:var(--ink);color:var(--frond);font-style:normal;font-size:12px;line-height:34px;text-align:center}
+.nav{display:flex;gap:24px;flex:1}
+.nav a{text-decoration:none;color:var(--ink);cursor:pointer;padding:4px 0;border-bottom:3px solid transparent;font-family:var(--f-brand);font-weight:700;font-size:15px}
+.nav a:hover{color:var(--action-pressed)}
+.nav a.on{border-color:var(--action)}
+/* buttons (Primary / Outline / Tertiary, pill, 44px) */
+.btn{border:2px solid transparent;background:var(--action);color:var(--ink);padding:8px 16px;min-height:44px;border-radius:var(--r-full);cursor:pointer;font-family:var(--f-brand);font-weight:700;font-size:15px;line-height:18px;display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:background .15s}
+.btn:hover{background:#ff8226}.btn:active{background:var(--action-pressed)}
+.btn.sec{background:transparent;border-color:var(--ink);color:var(--ink)}
+.btn.sec:hover{background:var(--inverse-pressed)}
+.btn.ghost{border-color:transparent;background:transparent;color:var(--ink);text-decoration:underline;padding:6px 10px}
+.btn.ghost:hover{background:var(--surface-strong)}
+.btn.sm{padding:4px 12px;min-height:36px;font-size:13px}
+.btn.block{width:100%}
+.btn[disabled]{background:var(--disabled);border-color:transparent;color:var(--ink);opacity:.8;cursor:not-allowed}
+.btn.sec[disabled]{background:transparent;border-color:var(--disabled);color:var(--ink-2)}
+:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+/* fields */
+input[type=text],input[type=email],input[type=tel],input[type=password],input[type=number],input[type=date],select,textarea{width:100%;border:1px solid var(--border-strong);background:var(--surface-strong);border-radius:var(--r-lg);padding:12px 14px;font-family:var(--f-body);font-size:15px;color:var(--ink)}
+input:focus,select:focus,textarea:focus{outline:none;border:2px solid var(--ink);padding:11px 13px}
+input::placeholder,textarea::placeholder{color:rgba(21,54,36,.4)}
+textarea{min-height:64px}
+label.f{display:block;font-family:var(--f-brand);font-size:12px;font-weight:700;color:var(--ink);margin-bottom:12px}
+label.f>input,label.f>select,label.f>textarea{margin-top:6px;font-weight:400}
+input[type=checkbox],input[type=radio]{accent-color:var(--ink);width:18px;height:18px}
+.chk{display:flex;gap:10px;align-items:flex-start;margin:6px 0;cursor:pointer}
+.chk input{margin-top:1px}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:0 14px}
+.grid3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:0 14px}
+.chip{border:1px solid var(--border-stronger);background:var(--bg);border-radius:var(--r-full);padding:7px 14px;font-size:13px;font-family:var(--f-brand);font-weight:700;cursor:pointer;white-space:nowrap}
+.chip:hover{background:var(--surface-strong)}
+.chip.on{background:var(--ink);color:var(--inverse);border-color:var(--ink)}
+.tag{display:inline-flex;align-items:center;border-radius:var(--r-full);padding:2px 9px;font-family:var(--f-brand);font-size:11px;font-weight:700;line-height:16px;color:var(--ink);background:var(--surface-strong);margin:0 4px 4px 0}
+.tag.dark{background:var(--ink);color:var(--inverse)}
+.box{border:1px solid var(--border-stronger);border-radius:var(--r-xl);padding:18px;background:var(--bg)}
+.box.g{background:var(--container);border-color:var(--container)}
+.alert{border-radius:var(--r-lg);background:var(--container);padding:12px 14px;margin:10px 0}
+.alert.err{background:var(--err-bg);border:1px solid var(--err)}
+.img{background:var(--surface-strong);border-radius:var(--r-lg);display:flex;align-items:flex-end;justify-content:flex-start;color:var(--ink-2);font-size:10px;padding:6px;border:1px solid var(--border-strong)}
+.img span{background:rgba(255,254,243,.85);padding:1px 6px;border-radius:var(--r-full)}
+table{border-collapse:collapse;width:100%}
+th,td{border-bottom:1px solid var(--border-stronger);padding:10px 8px;text-align:left;font-size:13px;vertical-align:top}
+th{font-family:var(--f-body);font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2)}
+.stepper{display:inline-flex;border:1px solid var(--border-stronger);border-radius:var(--r-full);align-items:center;overflow:hidden;background:var(--bg)}
+.stepper button{border:0;background:var(--surface-strong);width:32px;height:32px;cursor:pointer;font-weight:700;font-size:16px;color:var(--ink)}
+.stepper button:hover{background:var(--inverse-pressed)}
+.stepper button[disabled]{color:var(--disabled);cursor:not-allowed}
+.stepper span{min-width:34px;text-align:center;font-weight:600}
+/* menu */
+.hero{background:var(--container);padding:24px 0 20px}
+.ful{display:flex;gap:14px;align-items:center;flex-wrap:wrap;background:var(--bg);border:1px solid var(--border-stronger);border-radius:var(--r-xl);padding:12px 18px;margin-top:14px}
+.ful .cell{padding-right:16px;border-right:1px solid var(--border-stronger)}
+.ful .cell:last-of-type{border:0}
+.ful .cell small{display:block;color:var(--ink-2);font-size:10px;text-transform:uppercase;letter-spacing:.06em}
+.catbar{position:sticky;top:0;background:var(--bg);border-bottom:2px solid var(--border);z-index:5;padding:10px 0;overflow-x:auto;white-space:nowrap}
+.catbar .chip{margin-right:6px}
+.filters{padding:14px 0;border-bottom:2px solid var(--border)}
+.filters .row{margin-bottom:8px}
+.filters b{font-weight:500;font-size:11px;text-transform:uppercase;letter-spacing:.06em;color:var(--ink-2);width:84px;display:inline-block}
+.items{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:16px;margin:12px 0 28px}
+.card{border:1px solid var(--border-stronger);border-radius:var(--r-xl);padding:12px;display:flex;flex-direction:column;gap:8px;cursor:pointer;background:var(--bg);transition:border-color .15s,box-shadow .15s}
+.card:hover{border-color:var(--ink);box-shadow:0 6px 16px rgba(21,54,36,.12)}
+.card .img{height:120px}
+.card h4{color:var(--ink);text-transform:none;font-family:var(--f-brand);font-weight:800;font-size:15px;line-height:19px;letter-spacing:0;margin:0}
+.card p{font-size:12px;color:var(--ink-2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;margin:0}
+.layout{display:grid;grid-template-columns:1fr 340px;gap:24px;align-items:start;padding:20px 0 40px}
+.layout.item{grid-template-columns:1fr 1fr}
+.crumbs{display:flex;flex-wrap:wrap;align-items:center;gap:6px;padding:12px 0;font-size:12px;color:var(--g5)}
+.crumb{background:none;border:0;padding:2px 0;cursor:pointer;color:var(--g5);text-decoration:underline;font-size:12px}
+.crumb:hover{color:var(--g7)}
+section[id^="cat-"]{scroll-margin-top:68px}
+.sticky{position:sticky;top:12px}
+.empty{border:1px dashed var(--border-stronger);padding:28px;text-align:center;color:var(--ink-2);border-radius:var(--r-xl);margin:12px 0}
+.ov{position:fixed;inset:0;background:var(--overlay);z-index:50;display:flex;align-items:flex-start;justify-content:center;overflow:auto;padding:30px 12px}
+.modal{background:var(--bg);border-radius:var(--r-2xl);max-width:680px;width:100%;padding:24px}
+.modal.sm{max-width:440px}
+.drawer{position:fixed;top:0;right:0;bottom:0;width:410px;max-width:100%;background:var(--bg);z-index:60;display:flex;flex-direction:column;box-shadow:-8px 0 24px rgba(21,54,36,.2)}
+.drawer .body{flex:1;overflow:auto;padding:16px}
+.drawer .foot{border-top:2px solid var(--border);padding:14px 16px;background:var(--surface)}
+.line{display:flex;gap:10px;padding:12px 0;border-bottom:1px solid var(--border-strong)}
+.line .img{width:56px;height:56px;flex:none;padding:0}
+.line .img span{display:none}
+.sum td{border:0;padding:3px 0}
+.sum tr.t td{border-top:2px solid var(--ink);font-family:var(--f-brand);font-weight:800;padding-top:10px;font-size:16px}
+.steps{display:flex;gap:6px;margin-bottom:14px}
+.steps div{flex:1;border-top:4px solid var(--border-stronger);padding-top:6px;font-size:12px;color:var(--ink-2)}
+.steps div.on{border-color:var(--action);color:var(--ink);font-family:var(--f-brand);font-weight:700}
+.sec-h{display:flex;gap:10px;align-items:center;margin-bottom:10px}
+.num{width:26px;height:26px;border-radius:50%;background:var(--ink);color:var(--inverse);display:flex;align-items:center;justify-content:center;font-family:var(--f-brand);font-weight:700;font-size:12px;flex:none}
+.tabs{display:flex;gap:4px;border-bottom:2px solid var(--border);margin-bottom:16px;flex-wrap:wrap}
+.tabs a{padding:10px 16px;cursor:pointer;color:var(--ink-2);border-bottom:3px solid transparent;margin-bottom:-2px;font-family:var(--f-brand);font-weight:700}
+.tabs a.on{color:var(--ink);border-color:var(--action)}
+.err-t{color:var(--err);font-size:12px;font-weight:500;margin:-6px 0 10px}
+.err-t:before{content:"! "}
+.email{border:1px solid var(--border-stronger);border-radius:var(--r-lg);background:var(--bg);padding:16px;font-size:13px}
+.email .hd{background:var(--surface);margin:-16px -16px 12px;padding:10px 16px;border-bottom:1px solid var(--border-stronger);font-size:12px;color:var(--ink-2);border-radius:var(--r-lg) var(--r-lg) 0 0}
+/* controls panel */
+#ctl{position:fixed;left:10px;bottom:10px;z-index:80;background:var(--bg);border:2px solid var(--ink);border-radius:var(--r-lg);width:250px;font-size:12px;overflow:hidden}
+#ctl header{background:var(--ink);color:var(--inverse);padding:8px 12px;cursor:pointer;display:flex;justify-content:space-between;font-family:var(--f-brand)}
+#ctl .b{padding:10px;max-height:60vh;overflow:auto}
+#ctl .b label{display:block;margin:4px 0}
+#ctl select{padding:3px 6px;font-size:12px;border-radius:var(--r-sm)}
+#toast{position:fixed;bottom:20px;left:50%;transform:translateX(-50%);background:var(--ink);color:var(--inverse);padding:12px 22px;border-radius:var(--r-full);z-index:100;font-family:var(--f-brand);font-weight:700}
+.ann{display:none}
+body.ann-on .ann{display:inline-block;background:var(--action-soft);border:1px dashed var(--action-pressed);color:var(--ink);font-size:9px;line-height:1.2;padding:1px 6px;margin:0 0 0 6px;border-radius:var(--r-full);font-weight:600;vertical-align:middle;text-transform:none;letter-spacing:0;font-family:var(--f-body)}
+/* footer (inverse) */
+.site-footer{background:var(--ink);color:var(--inverse);margin-top:24px}
+.site-footer .wrap{padding-top:36px;padding-bottom:96px}
+.site-footer .cols{display:grid;grid-template-columns:1.4fr repeat(4,1fr);gap:24px}
+.site-footer h5{margin:0 0 10px;font-family:var(--f-brand);font-weight:800;font-size:14px;color:var(--frond)}
+.site-footer a{display:block;color:var(--inverse);text-decoration:none;font-size:13px;margin:6px 0;font-weight:500}
+.site-footer .legal{border-top:1px solid rgba(255,254,243,.25);margin-top:24px;padding-top:16px;font-size:12px;color:var(--border-stronger)}
+
+/* view toggle + canvas */
+.mode{position:fixed;bottom:16px;left:50%;transform:translateX(-50%);z-index:120;display:flex;gap:4px;background:var(--ink);border-radius:var(--r-full);padding:4px;box-shadow:0 8px 24px rgba(21,54,36,.35)}
+.mode button{border:0;background:transparent;color:var(--inverse);font-family:var(--f-brand);font-weight:700;font-size:14px;padding:9px 20px;border-radius:var(--r-full);cursor:pointer;min-height:40px}
+.mode button.on{background:var(--action);color:var(--ink)}
+.mode button:not(.on):hover{background:rgba(255,254,243,.15)}
+.cv{background:var(--surface-strong);min-height:100vh;padding:24px 24px 110px}
+.cv-bar{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;flex-wrap:wrap;margin-bottom:8px}
+.cv-bar h1{margin:0 0 2px}
+.cv-t{margin:28px 0 12px;font-size:22px}
+.cv-row{display:flex;gap:24px;overflow-x:auto;padding:4px 4px 20px;align-items:flex-start}
+.cv-b{margin:0;flex:none}
+.cv-b figcaption{font-family:var(--f-brand);font-weight:700;font-size:13px;margin:0 0 8px}
+.cv-f{position:relative;overflow:hidden;background:var(--bg);border-radius:var(--r-lg);box-shadow:0 2px 10px rgba(21,54,36,.15);transition:outline-color .15s;outline:3px solid transparent}
+.cv-f:hover{outline-color:var(--action)}
+.cv-in{width:1100px;transform-origin:0 0;position:relative;pointer-events:none;background:var(--bg);overflow:hidden}
+.cv-open{position:absolute;inset:0;background:transparent;border:0;cursor:pointer;z-index:5}
+.cv-f .cv-hint{position:absolute;left:50%;bottom:10px;transform:translateX(-50%);z-index:6;background:var(--ink);color:var(--inverse);font-family:var(--f-brand);font-weight:700;font-size:12px;padding:6px 14px;border-radius:var(--r-full);opacity:0;pointer-events:none;transition:opacity .15s;white-space:nowrap}
+.cv-f:hover .cv-hint{opacity:1}
+@media(max-width:860px){.layout,.layout.item{grid-template-columns:1fr}.sticky{position:static}.grid2,.grid3{grid-template-columns:1fr}.nav{display:none}.ful .cell{border:0}.site-footer .cols{grid-template-columns:1fr 1fr}}
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+/* ============ DATA (menu from EZCater: Tropical Smoothie Cafe, 572 Hank Aaron Dr SE, Atlanta) ============ */
+const FLAV=['Bahama Mama™','Sunrise Sunset™','Mango Monsoon™','Island Green®','Detox Island Green®','Acai Berry Boost™','Peanut Butter Cup™','Jetty Punch™'];
+const WRAPS=['Buffalo Chicken Wrap','Caribbean Jerk Chicken Wrap','Supergreen Caesar Chicken Wrap','Thai Chicken Wrap','Baja Chicken Wrap','Hummus Veggie Wrap'];
+const FLATS=['Chipotle Chicken Flatbread','Chicken Bacon Ranch Flatbread','Chicken Pesto Flatbread'];
+const SIDES=['Baked Lays Original Chips','Sun Chips Harvest Cheddar','Miss Vickie\'s Salt & Vinegar','Banana','Apple'];
+const COOKIES=['Chocolate Chip Cookie','Snickerdoodle Cookie'];
+const CATS=[
+{id:'packs',name:'Smoothie Packs',kind:'pack',occ:['event','corporate','breakfast'],items:[
+['10 Pack 12 Oz. Smoothies',49.99,'Choose up to 5 of our best-selling smoothies: Bahama Mama™, Sunrise Sunset™, Mango Monsoon™, Island Green®, Detox Island Green®, Acai Berry Boost™, Peanut Butter Cup™ and Jetty Punch™. Serves 10.',{m:1,i:1,s:10}],
+['10 Pack 24 Oz. Smoothies',90.39,'Choose from our best-selling smoothies: Bahama Mama™, Sunrise Sunset™, Mango Monsoon™, Island Green®, Detox Island Green®, Acai Berry Boost™, Peanut Butter Cup™ and Jetty Punch™. Serves 10.',{m:1,i:1,s:10}]]},
+{id:'boxed',name:'Boxed Lunches',kind:'boxed',occ:['lunch','corporate'],items:[
+['Wrap & Sandwich Boxed Lunch',13.29,'Each box contains choice of wrap or sandwich, choice of side and choice of cookie. Served untoasted.',{m:1,i:1,main:[...WRAPS,'Turkey Bacon Ranch Sandwich']}],
+['Flatbread Boxed Lunch',12.29,'Each box contains choice of flatbread, choice of side and choice of cookie. Served untoasted.',{m:1,i:1,main:FLATS}],
+['Vegetarian Boxed Lunch',13.29,'Each box contains choice of Hummus Veggie Wrap or PB Crunch Flatbread, choice of side and choice of cookie. Served untoasted.',{m:1,i:1,main:['Hummus Veggie Wrap','PB Crunch Flatbread']}]]},
+{id:'trays',name:'Assorted Trays',kind:'tray',occ:['lunch','corporate','event'],items:[
+['Assorted Wrap & Sandwich Tray',101.09,'2 Turkey Bacon Ranch Sandwiches, 2 Buffalo Chicken Wraps, 2 Caribbean Jerk Chicken Wraps, 2 Supergreen Chicken Caesar Wraps, 1 Thai Chicken Wrap, 1 Hummus Veggie Wrap. Each cut in half for 20 pieces. Serves 10. Served untoasted.',{m:1,s:10}],
+['Assorted Breakfast Tray',60.69,'2 All American Wraps, 2 Spinach & Pesto Wraps, 2 Southwest Wraps, 2 Cali Breakfast Flatbreads and 2 PB Banana Crunch Flatbreads. Each cut in half for 20 pieces. Serves 10.',{m:1,s:10,occ:['breakfast','corporate']}],
+['Assorted Flatbread Tray',91.09,'4 Chipotle Chicken Club Flatbreads, 3 Chicken Bacon Ranch Flatbreads and 3 Chicken Pesto Flatbreads each cut in half. 20 pieces, serves 10. Served untoasted.',{m:1,s:10}],
+['Turkey Bacon Ranch Tray',101.09,'10 Turkey Bacon Ranch Sandwiches cut in half. 20 pieces, serves 10. Served untoasted.',{s:10}]]},
+{id:'byo',name:'Build Your Own Trays',kind:'byo',occ:['lunch','corporate'],items:[
+['Build Your Own Assorted Tray',101.09,'Select up to 10 wraps, sandwiches or flatbreads, each cut in half. Served untoasted.',{m:1,s:10,byo:10,opts:[...WRAPS.slice(0,5).concat(['Hummus Veggie Wrap']),'Turkey Bacon Ranch Sandwich',...FLATS]}],
+['Build Your Own Breakfast Tray',60.69,'Select up to 5 breakfast items. Each cut in half for 20 pieces. Serves 10.',{s:10,byo:5,occ:['breakfast'],opts:['All American (bacon) Wrap','Spinach & Pesto Wrap','Southwest Wrap (chicken)','Cali Breakfast Flatbread (chicken)','PB Banana Crunch Flatbread']}],
+['Build Your Own Wrap & Sandwich Tray',101.09,'Select up to 10 wraps or sandwiches. Each cut in half for 20 pieces. Serves 10. Served untoasted.',{s:10,byo:10,opts:[...WRAPS,'Turkey Bacon Ranch Sandwich']}],
+['Build Your Own Flatbread Tray',91.09,'Select up to 3 flatbreads. Each cut in half for 20 pieces. Serves 10. Served untoasted.',{s:10,byo:3,opts:FLATS}]]},
+{id:'salads',name:'Group Salads',kind:'tray',occ:['lunch','corporate'],items:[
+['Catering Supergreen Chicken Caesar Salad',41.09,'Grilled chicken, parmesan crisps, shredded parmesan & tomato on fresh romaine and spinach. Served with creamy Caesar dressing on the side. Serves 10.',{m:1,s:10}],
+['Catering Kale & Apple Slaw',31.09,'A blend of julienned green apple, shredded carrots, fresh kale & honey Dijon dressing. Serves 10.',{s:10}],
+['Catering Thai Chicken Salad',41.09,'Grilled chicken, crispy wontons, shredded carrots & fresh cilantro on fresh romaine. Served with Thai dressing on the side. Serves 10.',{s:10}]]},
+{id:'abowls',name:'Assorted Tropic Bowls',kind:'tray',occ:['breakfast','event'],items:[
+['Assorted Tropic Bowls',121.09,'4 Acai Bowls, 2 Acai Bowls with NUTELLA®, 2 Bahama Mama™ Bowls & 2 Dragon Fruit Bowls. Serves 10.',{m:1,i:1,s:10}],
+['Assorted Breakfast Bowls',101.09,'4 Mixed Berry Greek Yogurt Bowls, 3 PB Protein Crunch Bowls & 3 Chia Oatmeal Bowls. Serves 10.',{i:1,s:10}]]},
+{id:'bowls',name:'A La Carte Tropic Bowls',kind:'alc',add:'bowl',occ:['breakfast'],items:[
+['Acai Bowl',12.69,'Acai base, fresh strawberries, fresh blueberries, banana, coconut, granola, chia seeds & honey drizzle.',{m:1,i:1}],
+['Acai Bowl with NUTELLA®',14.29,'Acai base, fresh strawberries, fresh blueberries, banana, coconut, granola, chia seeds, honey drizzle & NUTELLA® drizzle.',{i:1}],
+['PB Protein Crunch',11.09,'Chobani® Greek Yogurt blended with peanut butter & honey, topped with banana, almonds, cacao nibs, granola, chia seeds & peanut butter drizzle – 32g of protein.',{i:1}],
+['Bahama Mama™ Bowl',12.79,'Bahama Mama™ base (with coconut, strawberries, pineapple & white chocolate) topped with granola, fresh pineapple & strawberries, coconut, chia seeds & honey drizzle.',{i:1}],
+['Chia Oatmeal',11.19,'A blend of chia seeds, red quinoa, coconut milk & steel cut oats topped with Chobani® Greek Yogurt, fresh blueberries, banana, granola, chia seeds & honey drizzle – 16g of protein.',{i:1}],
+['Dragon Fruit Bowl',12.69,'Dragon fruit base, fresh pineapple, fresh strawberries, banana, coconut, granola, chia seeds & honey drizzle.',{i:1}]]},
+{id:'sm24',name:'A La Carte 24 Oz. Smoothies',kind:'alc',add:'smoothie',occ:['breakfast','lunch','event','corporate'],items:[
+['Jetty Punch™',5.29,'Strawberries & banana.',{m:1}],['Bahama Mama™',5.49,'Strawberries, pineapple, coconut & white chocolate.',{m:1}],['Mango Magic™',4.99,'Mango, pineapple & non-fat yogurt.',{m:1}],['Sunrise Sunset™',4.99,'Strawberries, pineapple, mango & orange juice.',{}],['Paradise Point™',4.89,'Strawberries, banana & pineapple.',{}],['Island Green®',5.59,'Spinach, kale, mango, pineapple & banana.',{}],['Detox Island Green®',5.59,'Spinach, kale, mango, pineapple, banana & fresh ginger (naturally sweetened).',{}],['Peanut Butter Cup™',5.19,'Peanut butter, banana & chocolate.',{}],['Acai Berry Boost™',8.99,'Acai, pomegranate, banana, blueberries & strawberries.',{}],['Mango Monsoon™ Smoothie',7.79,'Mango, pineapple, papaya, guava, passion fruit & coconut. Garnish not provided with any smoothie.',{}],['Peanut Paradise™',5.29,'Peanut butter, banana, non-fat yogurt & choice of whey or pea protein – 22g/35g of protein.',{}],['Blueberry Bliss™',5.29,'Blueberries, strawberries & banana.',{}],['Kiwi Quencher®',4.99,'Kiwi, strawberries & non-fat yogurt.',{}],['Blimey Limey™',5.29,'Strawberries, pineapple, orange juice & lime.',{}],['Beach Bum™',5.49,'Strawberries, banana & choice of white or dark chocolate.',{}],['Tropical Dragon Passion Smoothie',7.99,'Dragon fruit, passion fruit, pineapple & lime. Garnish not provided with any smoothie.',{}],['Pomegranate Plunge™',5.29,'Pomegranate, banana, cranberry & strawberries.',{}],['Mocha Madness™',5.19,'Chocolate, coffee, cappuccino & non-fat yogurt.',{}],['Chia Banana Boost®',5.59,'Banana, chia seeds, almonds, peanut butter, whole-grain oats, cinnamon, dates & coconut.',{}],['Avocolada™',5.59,'Avocado, pineapple, spinach, kale, coconut & lime.',{}],['Sunshine Smoothie®',8.39,'Mango, pineapple, orange juice & banana. $1 from each Sunshine Smoothie® purchased goes to No Kid Hungry®, 1/1 thru 12/31. Not eligible for any offers, rewards, discounts or point redemptions.',{}]]},
+{id:'sm12',name:'A La Carte 12 Oz. Smoothies',kind:'alc',add:'smoothie',occ:['breakfast','lunch','event','corporate'],items:[
+['2 – 12 Oz. Jetty Punch™',6.00,'Strawberries & banana.',{i:1,s:2}],['2 – 12 Oz. Paradise Point™',6.00,'Strawberries, banana & pineapple.',{i:1,s:2}],['2 – 12 Oz. Blueberry Bliss™',6.00,'Blueberries, strawberries & banana.',{i:1,s:2}],['2 – 12 Oz. Mango Magic™',6.00,'Mango, pineapple & non-fat yogurt.',{i:1,s:2}],['2 – 12 Oz. Mocha Madness™',6.00,'Chocolate, coffee, cappuccino & non-fat yogurt.',{i:1,s:2}],['2 – 12 Oz. Bahama Mama™',6.00,'Strawberries, pineapple, coconut & white chocolate.',{i:1,s:2}],['2 – 12 Oz. Tropical Dragon Passion Smoothie',8.78,'Dragon fruit, passion fruit, pineapple & lime.',{i:1,s:2}],['2 – 12 Oz. Sunrise Sunset™',6.50,'Strawberries, pineapple, mango & orange juice.',{i:1,s:2}],['2 – 12 Oz. Blimey Limey™',6.00,'Strawberries, pineapple, orange juice & lime.',{i:1,s:2}],['2 – 12 Oz. Beach Bum™',6.00,'Strawberries, banana & choice of white or dark chocolate.',{i:1,s:2}],['2 – 12 Oz. Acai Berry Boost™',6.00,'Acai, pomegranate, banana, blueberries & strawberries.',{i:1,s:2}],['2 – 12 Oz. Island Green®',6.50,'Spinach, kale, mango, pineapple & banana.',{i:1,s:2}],['2 – 12 Oz. Peanut Butter Cup™',6.00,'Peanut butter, banana & chocolate.',{i:1,s:2}],['2 – 12 Oz. Kiwi Quencher®',6.00,'Kiwi, strawberries & non-fat yogurt.',{i:1,s:2}],['2 – 12 Oz. Detox Island Green®',10.58,'Spinach, kale, mango, pineapple, banana & fresh ginger.',{i:1,s:2}],['2 – 12 Oz. Peanut Paradise™',6.00,'Peanut butter, banana, non-fat yogurt & choice of whey or pea protein.',{i:1,s:2}],['2 – 12 Oz. Mango Monsoon™ Smoothie',8.78,'Mango, pineapple, papaya, guava, passion fruit & coconut.',{i:1,s:2}],['2 – 12 Oz. Pomegranate Plunge™',6.00,'Pomegranate, banana, cranberry & strawberries.',{i:1,s:2}],['2 – 12 Oz. Avocolada™',4.00,'Avocado, pineapple, spinach, kale, coconut & lime.',{i:1,s:2}],['2 – 12 Oz. Sunshine Smoothie®',6.00,'Mango, pineapple, orange juice & banana.',{i:1,s:2}],['2 – 12 Oz. Chia Banana Boost®',6.00,'Banana, chia seeds, almonds, peanut butter, whole-grain oats, cinnamon, dates & coconut.',{i:1,s:2}]]},
+{id:'bkfst',name:'A La Carte Breakfast',kind:'alc',add:'wrap',occ:['breakfast'],items:[
+['All American Wrap',5.59,'Bacon or sausage, eggs, cheddar & mozzarella – 17g/23g of protein.',{}],['PB Banana Crunch Flatbread',5.49,'Peanut butter, banana, granola & honey.',{}],['Sausage Egg & Cheese \'Dilla',7.69,'Sausage, eggs, queso blanco, cheddar, smoked cheese blend & served with roasted tomato salsa – 27g of protein.',{}],['Cali Breakfast Flatbread',6.99,'Choice of protein, eggs, smoked cheese blend, smashed avocado & chipotle mayo.',{}],['Spinach & Pesto Wrap',6.49,'Eggs, spinach, mozzarella, roasted red peppers & pesto.',{}],['Southwest Wrap',6.49,'Choice of grilled chicken, bacon or sausage, eggs, pepper jack, tomatoes, spinach & chipotle mayo.',{}]]},
+{id:'sand',name:'A La Carte Sandwiches',kind:'alc',add:'wrap',occ:['lunch','corporate'],items:[['Turkey Bacon Ranch',5.99,'Turkey, bacon, tomatoes, romaine, swiss & lite ranch on ciabatta.',{}]]},
+{id:'wraps',name:'A La Carte Wraps',kind:'alc',add:'wrap',occ:['lunch','corporate'],items:[
+['Supergreen Caesar Chicken',5.99,'Grilled chicken, romaine, spinach, shredded parmesan, tomatoes, parmesan crisps & caesar.',{}],['Buffalo Chicken',6.99,'Grilled chicken, tomatoes, romaine, mozzarella, buffalo sauce & lite ranch.',{}],['Baja Chicken',5.99,'Grilled chicken, rice, black beans, smashed avocado, romaine, pickled red onions, cheddar & roasted tomato salsa.',{}],['Hummus Veggie',5.99,'Hummus, smashed avocado, pepper jack, romaine, rice, black beans, pickled red onions, tomatoes & lite ranch.',{}],['Thai Chicken',6.99,'Grilled chicken, carrots, wontons, cilantro, scallions, romaine & Thai peanut sauce.',{}],['Caribbean Jerk Chicken',5.99,'Grilled chicken, rice, black beans, cheddar, pineapple salsa, romaine & jerk sauce.',{}]]},
+{id:'flat',name:'A La Carte Flatbreads',kind:'alc',add:'wrap',occ:['lunch','corporate'],items:[
+['Chicken Pesto',8.09,'Grilled chicken, tomatoes, shredded parmesan, mozzarella & pesto.',{}],['Chicken Bacon Ranch',7.59,'Grilled chicken, bacon, tomatoes, romaine, cheddar & lite ranch.',{}],['Chipotle Chicken Club',5.79,'Grilled chicken, bacon, tomatoes, romaine, pepper jack & chipotle mayo.',{}]]},
+{id:'dillas',name:"A La Carte 'Dillas",kind:'alc',add:'wrap',occ:['lunch','corporate'],items:[
+['3 Cheese Chicken \'Dilla',7.99,'Grilled chicken, queso blanco, cheddar, smoked cheese blend & served with roasted tomato salsa.',{}],['Santa Fe Chicken \'Dilla',7.99,'Grilled chicken, black beans, roasted red pepper & onion, roasted tomato salsa, queso blanco, cheddar & smoked cheese blend.',{}]]},
+{id:'sides',name:'A La Carte Sides',kind:'alc',occ:['breakfast','lunch','event','corporate'],items:[
+['Baked Lays Original Chips',2.29,'',{m:1}],['Sun Chips Harvest Cheddar',2.29,'',{m:1}],['Miss Vickie\'s® Salt & Vinegar',2.29,'',{m:1}],['Banana',1.19,'',{}],['Apple',1.19,'',{}]]},
+{id:'sweets',name:'A La Carte Sweets',kind:'alc',occ:['breakfast','lunch','event','corporate'],items:[['Chocolate Chip Cookie',1.99,'',{m:1}],['Snickerdoodle Cookie',1.99,'',{}]]},
+{id:'bev',name:'Bottled Beverages',kind:'alc',occ:['breakfast','lunch','event','corporate'],items:[['Dasani®',2.49,'',{}],['Coca-Cola® Zero Sugar 20 Oz',2.39,'',{}],['Gold Peak® Sweet Tea',2.19,'',{}],['Coca-Cola® 20 Oz',2.39,'',{}],['Sprite® 20 Oz',2.39,'',{}]]}
+];
+const ITEMS=[];CATS.forEach(c=>c.items.forEach((a,i)=>{const o=a[3]||{};const id=c.id+'-'+i;
+const vegan=/JETTY|PARADISE POINT|BLUEBERRY|SUNRISE|ISLAND GREEN|MONSOON|POMEGRANATE|AVOCOLADA|BLIMEY|DRAGON PASSION|ACAI BERRY|^BANANA|^APPLE|DASANI|COCA|SPRITE|GOLD PEAK|LAYS|SUN CHIPS|VICKIE/i.test(a[0]);
+const veg=vegan||/HUMMUS|VEGETARIAN|KALE|SPINACH & PESTO|PB BANANA|YOGURT|BOWL|OATMEAL|PB PROTEIN|PEANUT|MANGO MAGIC|KIWI|BAHAMA|BEACH|MOCHA|SUNSHINE|CHIA BANANA|COOKIE|SMOOTHIE|PACK/i.test(a[0])&&!/CHICKEN|TURKEY|BACON|SAUSAGE/i.test(a[0]);
+const gf=['packs','sm24','sm12','bev'].includes(c.id)||/^(Banana|Apple)/.test(a[0])||/LAYS|VICKIE/i.test(a[0]);
+const tags=[];if(veg)tags.push('Vegetarian');if(vegan)tags.push('Vegan');if(gf)tags.push('Gluten-free');
+const t=(a[0]+' '+a[2]).toLowerCase();const al=[];
+if(/yogurt|cheese|mozzarella|queso|cheddar|swiss|parmesan|ranch|white chocolate|whey|pepper jack|nutella|chocolate/.test(t))al.push('Milk');
+if(/egg|mayo|caesar|ranch/.test(t))al.push('Egg');
+if(/wrap|flatbread|sandwich|ciabatta|granola|wonton|cookie|oat|'dilla|boxed|tray/.test(t))al.push('Wheat');
+if(/peanut/.test(t))al.push('Peanut');
+if(/almond|coconut|nutella/.test(t))al.push('Tree nut');
+if(/soy|thai|nutella/.test(t))al.push('Soy');
+ITEMS.push({id,cat:c.id,kind:c.kind,add:c.add,name:a[0],price:a[1],desc:a[2]||'',most:!!o.m,indiv:!!o.i,serves:o.s||0,byo:o.byo||0,opts:o.opts||null,main:o.main||null,occ:o.occ||c.occ,tags,allergens:al})}));
+const byId=id=>ITEMS.find(x=>x.id===id);
+const CAF={
+hank:{name:'Hank Aaron Dr SE',addr:'572 Hank Aaron Dr SE, Atlanta, GA',phone:'(404) 000-0001',hours:'Mon–Sat 8:00 AM – 8:00 PM',min:75,lead:24,fee:30,cutoff:24,noDel:[0],noPick:[0]},
+midtown:{name:'Midtown (placeholder)',addr:'000 Peachtree St NE, Atlanta, GA',phone:'(404) 000-0002',hours:'Mon–Sun 7:00 AM – 9:00 PM',min:100,lead:48,fee:35,cutoff:48,noDel:[0,6],noPick:[]},
+buckhead:{name:'Buckhead (placeholder)',addr:'000 Piedmont Rd NE, Atlanta, GA',phone:'(404) 000-0003',hours:'Mon–Sat 8:00 AM – 8:00 PM',min:75,lead:24,fee:40,cutoff:24,noDel:[0],noPick:[0]},
+decatur:{name:'Decatur (placeholder)',addr:'000 E Ponce de Leon Ave, Decatur, GA',phone:'(404) 000-0004',hours:'Mon–Fri 8:00 AM – 6:00 PM',min:75,lead:24,fee:45,cutoff:24,noDel:[0,6],noPick:[0,6]}};
+const ZIPS={'30315':['hank','midtown'],'30312':['hank','midtown'],'30316':['hank','decatur'],'30308':['midtown','hank','buckhead'],'30309':['midtown','buckhead'],'30305':['buckhead','midtown'],'30030':['decatur','hank'],'30004':[]};
+const SLOTS=['7:30 AM','8:00 AM','8:30 AM','9:00 AM','9:30 AM','10:00 AM','10:30 AM','11:00 AM','11:30 AM','12:00 PM','12:30 PM','1:00 PM','1:30 PM','2:00 PM','3:00 PM','4:00 PM','5:00 PM'];
+const PROMOS={TSC10:{pct:.10,label:'10% off'},CAFE25:{amt:25,label:'$25 off (Hank Aaron Dr SE only)',cafe:'hank'},OLDCODE:{err:'This code expired on 08/31.'},USED1:{err:'This single-use code was already redeemed.'}};
+const TAX=0.089,THRESH=500;
+
+/* ============ STATE ============ */
+const iso=d=>d.toISOString().slice(0,10);
+const addDays=n=>{const d=new Date();d.setDate(d.getDate()+n);return iso(d)};
+const S={mode:(location.hash==='#canvas'?'canvas':'proto'),zoom:.4,view:'menu',tab:'orders',ctab:'orders',modal:null,drawer:false,ctl:false,ann:false,
+ user:{in:false,role:'buyer',corp:false,po:false,taxEx:false,name:'Jordan Rivera',email:'jordan@example.com',phone:'4045550123'},
+ occ:'all',diet:[],cat:null,headcount:25,
+ ful:{mode:'delivery',addr:'',cafe:'hank',elig:[],date:addDays(7),slot:'11:30 AM',valid:false,err:null,okMsg:null,dist:null,draft:null},
+ cart:[],cfg:null,tip:{mode:'pct',val:15,custom:false},promo:null,promoIn:'',promoErr:'',
+ co:{type:'personal',name:'',billName:'',billEmail:'',po:''},
+ c:{name:'',email:'',phone:'',addr2:'',instr:'',acct:false,pw:''},
+ pay:{method:'card',num:'',exp:'',cvc:'',zip:'',result:'success'},errs:{},
+ order:null,orders:[
+  {id:'TSC-48213',date:'2026-09-18',slot:'12:00 PM',mode:'delivery',cafe:'hank',guests:20,total:318.42,status:'Completed',guest:false,lines:[{id:'trays-0',qty:2,sel:{},unit:101.09,sum:''},{id:'sweets-0',qty:20,sel:{},unit:1.99,sum:''}]},
+  {id:'TSC-47790',date:'2026-08-27',slot:'9:00 AM',mode:'pickup',cafe:'hank',guests:12,total:142.10,status:'Completed',guest:false,lines:[{id:'trays-1',qty:1,sel:{},unit:60.69,sum:''},{id:'packs-0',qty:1,sel:{},unit:49.99,sum:''}]}],
+ users:[{n:'Jordan Rivera',e:'jordan@example.com',r:'Buyer'},{n:'Sam Patel',e:'sam@example.com',r:'Approver'},{n:'Alex Kim',e:'alex@example.com',r:'Admin'}],
+ approvals:[{id:'TSC-48377',by:'Jordan Rivera',amt:642.18,st:'Pending'},{id:'TSC-48301',by:'Jordan Rivera',amt:733.05,st:'Pending'}],
+ po:'none',taxcert:'none',certFile:'',emailTab:'confirm',toast:'',dup:null,delConfirm:false,prefs:{em_t:true,em_p:true,em_f:false,sms_t:true,sms_p:false,sms_f:false,pu_t:true,pu_p:false,pu_f:false}};
+try{const c=JSON.parse(localStorage.getItem('tsc_cart')||'null');if(c&&c.length)S.cart=c}catch(e){}
+const saveCart=()=>{if(S._noSave)return;try{localStorage.setItem('tsc_cart',JSON.stringify(S.cart))}catch(e){}};
+
+/* ============ HELPERS ============ */
+const $m=n=>'$'+(+n).toFixed(2);
+const A=t=>`<span class="ann">${t}</span>`;
+const fd=d=>new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'});
+const fdl=d=>new Date(d+'T12:00:00').toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric',year:'numeric'});
+const esc=s=>String(s).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const Img=(l,h)=>`<div class="img" role="img" aria-label="${esc(l)}" style="${h?'height:'+h+'px':''}"><span>IMG · alt: ${esc(l)}</span></div>`;
+const cafe=()=>CAF[S.ful.cafe];
+const dow=d=>new Date(d+'T12:00:00').getDay();
+const earliest=c=>addDays(Math.ceil(c.lead/24));
+function recQty(it){return it.serves?Math.max(1,Math.ceil(S.headcount/it.serves)):1}
+function toast(t){S.toast=t;render();setTimeout(()=>{S.toast='';render()},2200)}
+function getP(o,p){return p.split('.').reduce((a,k)=>a&&a[k],o)}
+function setP(o,p,v){const k=p.split('.');const l=k.pop();const t=k.reduce((a,x)=>a[x],o);t[l]=v}
+function cutoffText(){const c=cafe();const d=new Date(S.ful.date+'T12:00:00');const m=SLOTS.indexOf(S.ful.slot);d.setHours(d.getHours()-c.cutoff);return d.toLocaleDateString('en-US',{weekday:'short',month:'short',day:'numeric'})+' at '+S.ful.slot}
+function avail(c,mode,date){const d=dow(date);if(mode==='delivery'&&c.noDel.includes(d))return 'Delivery is not available from this cafe on '+['Sundays','Mondays','Tuesdays','Wednesdays','Thursdays','Fridays','Saturdays'][d]+' (cafe not accepting delivery orders for this date).';
+ if(mode==='pickup'&&c.noPick.includes(d))return 'This cafe is closed for pickup on that date.';
+ if(date<earliest(c))return `This cafe requires ${c.lead} hours lead time. Earliest available date: ${fd(earliest(c))}.`;
+ if(date>addDays(90))return 'Orders can be scheduled up to 90 days in advance.';return null}
+function totals(){const sub=S.cart.reduce((a,l)=>a+l.unit*l.qty,0);const c=cafe();
+ const fee=S.ful.mode==='delivery'?(S.ful.valid?c.fee:null):0;
+ let disc=0;if(S.promo){disc=S.promo.pct?sub*S.promo.pct:S.promo.amt;disc=Math.min(disc,sub)}
+ const tax=S.user.taxEx?0:(sub-disc+(fee||0))*TAX;
+ const tip=S.tip.mode==='pct'?(sub-disc)*S.tip.val/100:(+S.tip.val||0);
+ const total=sub-disc+(fee||0)+tax+tip;return{sub,fee,disc,tax,tip,total}}
+function minGap(){const t=totals();return Math.max(0,cafe().min-(t.sub))}
+
+/* ============ ITEM CONFIG ============ */
+function groups(it){const g=[];
+ if(it.kind==='pack')g.push({n:'Choose your smoothies (up to 5)',t:'count',max:5,min:1,o:FLAV.map(n=>[n,0])});
+ if(it.kind==='boxed'){g.push({n:'Choose your main',t:'radio',req:1,o:it.main.map(n=>[n,0])});g.push({n:'Choose your side',t:'radio',req:1,o:SIDES.map(n=>[n,0])});g.push({n:'Choose your cookie',t:'radio',req:1,o:COOKIES.map(n=>[n,0])})}
+ if(it.kind==='byo')g.push({n:`Select up to ${it.byo} items`,t:'count',max:it.byo,min:1,o:it.opts.map(n=>[n,0])});
+ if(it.kind==='tray')g.push({n:'Add-ons',t:'check',o:[['Plates, napkins & utensils',0],['Add 12 assorted cookies',23.88],['Add 10 bottled waters',24.90]]});
+ if(it.kind==='alc'){if(it.add==='smoothie')g.push({n:'Add-ons',t:'check',o:[['Protein boost (whey or pea)',1.5],['Extra fruit',0.99]]});
+  if(it.add==='wrap')g.push({n:'Add-ons',t:'check',o:[['Add grilled chicken',2.5],['Add smashed avocado',1.25]]});
+  if(it.add==='bowl')g.push({n:'Add-ons',t:'check',o:[['Extra granola',0.75],['Add protein',1.5]]})}
+ return g}
+function cfgCalc(){const c=S.cfg,it=byId(c.id),gs=groups(it);let add=0,ok=true,sum=[];
+ gs.forEach((g,gi)=>{const s=c.sel[gi]||{};let n=0;g.o.forEach((o,oi)=>{const q=s[oi]||0;if(q){n+=q;add+=o[1]*q;sum.push(g.t==='count'?q+'× '+o[0]:o[0])}});
+  if(g.t==='radio'&&n<1)ok=false;if(g.t==='count'&&n<g.min)ok=false;});
+ return{unit:it.price+add,ok,sum:sum.join(', '),gs,it}}
+function openItem(id){const it=byId(id);S.cfg={id,qty:recQty(it),sel:{},note:''};S.view='item';window.scrollTo(0,0);render()}
+function addToCart(){const {unit,ok,sum,it}=cfgCalc();if(!ok)return;const c=S.cfg;
+ S.cart.push({id:c.id,qty:c.qty,sel:JSON.parse(JSON.stringify(c.sel)),unit,sum,note:c.note});saveCart();S.drawer=true;S.view='menu';render()}
+function quickAdd(id,q){const it=byId(id);S.cart.push({id,qty:q,sel:{},unit:it.price,sum:'',note:''});saveCart();S.drawer=true;render()}
+
+/* ============ VIEWS ============ */
+function header(){const n=S.cart.reduce((a,l)=>a+l.qty,0),t=totals().sub;
+ return `<div class="top"><div class="wrap"><div class="logo" data-act="go" data-v="menu"><i>TSC</i>Tropical Smoothie Cafe</div>
+ <div class="nav"><a>Order</a><a>Rewards</a><a>Locations</a><a class="${S.view!=='account'&&S.view!=='company'?'on':''}" data-act="go" data-v="menu">Catering</a><a>Gift Cards</a></div>
+ ${S.user.in?`<a class="small" style="cursor:pointer" data-act="go" data-v="account">${esc(S.user.name)}</a>${S.user.corp?`<button class="btn sec sm" data-act="go" data-v="company">Company</button>`:''}<button class="btn ghost sm" data-act="signout">Sign out</button>`:`<button class="btn sec sm" data-act="modal" data-m="signin">Sign in</button>`}
+ <button class="btn sm" data-act="drawer">Cart (${n}) · ${$m(t)}</button></div></div>`}
+
+function fulSummary(){const f=S.ful,c=cafe();
+ return `<div class="ful">
+ <div class="cell"><small>Fulfillment</small><b>${f.mode==='delivery'?'Delivery':'Pickup'}</b></div>
+ <div class="cell"><small>${f.mode==='delivery'?'Deliver to':'Pickup at'}</small>${f.valid?esc(f.mode==='delivery'?f.addr:c.addr):'<span class="muted">Not set</span>'}</div>
+ <div class="cell"><small>When</small>${f.valid?fd(f.date)+', '+f.slot:'<span class="muted">Select date & time</span>'}</div>
+ <div class="cell"><small>Cafe</small>${f.valid?esc(c.name):'<span class="muted">Auto-assigned</span>'}</div>
+ <div class="cell"><small>Headcount${A('Headcount-driven portions')}</small><input type="number" min="1" style="width:76px;padding:4px 6px" value="${S.headcount}" data-bind="headcount" data-num data-live data-key="hc"></div>
+ <div class="cell"><small>Delivery fee${A('Delivery fee transparency')}</small>${f.mode==='pickup'?'$0.00':f.valid?$m(c.fee):'from $30'}</div>
+ <div class="grow"></div><button class="btn sec sm" data-act="modal" data-m="ful">${f.valid?'Edit':'Set delivery / pickup'}</button></div>`}
+
+function cardH(it){const rq=recQty(it);
+ return `<div class="card" data-act="item" data-id="${it.id}">${Img(it.name,110)}
+ <div class="row between"><h4>${esc(it.name)}</h4></div>
+ <div>${it.most?'<span class="tag dark">Most ordered</span>':''}${it.indiv?'<span class="tag">Individual packaging</span>':''}${it.serves>=10?`<span class="tag">Serves ${it.serves}–${it.serves+2}</span>`:it.serves?`<span class="tag">Serves ${it.serves}</span>`:''}${it.tags.map(t=>`<span class="tag">${t}</span>`).join('')}</div>
+ ${it.desc?`<p>${esc(it.desc)}</p>`:''}
+ <div class="row between" style="margin-top:auto"><div><b>${$m(it.price)}</b>${it.serves>=5?` <span class="small muted">· ${$m(it.price/it.serves)}/guest</span>`:''}</div>
+ <span class="small muted">XXX cal</span></div>
+ ${it.serves>=5?`<div class="small" style="border-top:1px dashed var(--g4);padding-top:5px">For ${S.headcount} guests: <b>${rq}×</b> = ${$m(rq*it.price)}</div>`:''}
+ <button class="btn sec sm" data-act="item" data-id="${it.id}">Customize &amp; add</button></div>`}
+
+function menuView(){
+ const occs=[['all','All'],['breakfast','Breakfast'],['lunch','Lunch'],['corporate','Corporate'],['event','Event']];
+ const diets=['Vegetarian','Vegan','Gluten-free','Kosher'];
+ const ok=it=>(S.occ==='all'||it.occ.includes(S.occ))&&S.diet.every(d=>it.tags.includes(d));
+ const secs=CATS.map(c=>({c,items:c.items.map((_,i)=>byId(c.id+'-'+i)).filter(ok)})).filter(s=>s.items.length);
+ const gap=minGap();
+ return `<div class="hero"><div class="wrap">
+ <div class="small muted">Home › Catering</div>
+ <h1>Catering ${A('Public browsing, no login')}</h1>
+ <p class="muted">Fresh smoothies, wraps, flatbreads and bowls for your next meeting or event. Browse freely – no account needed.</p>
+ ${fulSummary()}</div></div>
+ <div class="wrap"><div class="filters">
+ <div class="row"><b>Occasion</b>${occs.map(o=>`<span class="chip ${S.occ===o[0]?'on':''}" data-act="occ" data-v="${o[0]}">${o[1]}</span>`).join('')}${A('Catering filters: occasion')}</div>
+ <div class="row"><b>Dietary</b>${diets.map(d=>`<span class="chip ${S.diet.includes(d)?'on':''}" data-act="diet" data-v="${d}">${d}</span>`).join('')}${A('Filters: dietary need')}</div>
+ <div class="row"><b>Headcount</b>${[['1–10',8],['11–25',18],['26–50',38],['50+',75]].map(h=>`<span class="chip" data-act="hc" data-v="${h[1]}">${h[0]}</span>`).join('')}<span class="small muted">Sets headcount → recalculates packages below</span>${A('Filters: headcount range')}</div>
+ </div>
+ <div class="catbar">${CATS.map(c=>`<span class="chip ${S.cat===c.id?'on':''}" data-act="cat" data-v="${c.id}">${c.name}</span>`).join('')}</div>
+ ${secs.length?secs.map(s=>`<section id="cat-${s.c.id}" style="padding-top:14px"><h2>${s.c.name} <span class="small muted">(${s.items.length})</span></h2><div class="items">${s.items.map(cardH).join('')}</div></section>`).join('')
+ :`<div class="empty"><b>No items match these filters.</b><br>${S.diet.includes('Kosher')?'No kosher-certified items are currently offered. ':''}<button class="btn sec sm" data-act="clear">Clear filters</button></div>`}
+ </div>`}
+
+function itemView(){const {unit,ok,sum,gs,it}=cfgCalc();const c=S.cfg;const tot=unit*c.qty;
+ return `<div class="wrap"><nav class="crumbs" aria-label="Breadcrumb"><button class="crumb" data-act="crumb">Home</button><span>›</span><button class="crumb" data-act="crumb">Catering</button><span>›</span><button class="crumb" data-act="crumb" data-cat="${it.cat}">${CATS.find(x=>x.id===it.cat).name}</button><span>›</span><span aria-current="page" class="bold">${esc(it.name)}</span></nav>
+ <div class="layout item">
+ <div>${Img(it.name+' – hero',320)}<div class="row" style="margin-top:8px">${[1,2,3].map(i=>`<div style="width:70px">${Img('alt view '+i,56)}</div>`).join('')}</div>${A('Hi-res imagery + alt text')}
+ <hr><h4>Nutrition &amp; allergens ${A('FDA labeling / allergen matrix')}</h4>
+ <p class="small"><b>XXX cal</b> per serving · Sodium XXX mg · Carbs XXXg · Protein XXg <span class="muted">(placeholder – FDA menu-labeling feed)</span></p>
+ <table><tr><th></th>${['Milk','Egg','Wheat','Soy','Peanut','Tree nut','Fish','Shellfish','Sesame'].map(a=>`<th>${a}</th>`).join('')}</tr>
+ <tr><td class="small">Contains</td>${['Milk','Egg','Wheat','Soy','Peanut','Tree nut','Fish','Shellfish','Sesame'].map(a=>`<td>${it.allergens.includes(a)?'●':'–'}</td>`).join('')}</tr></table>
+ <p class="small muted" style="margin-top:6px">Allergen data illustrative. Prepared in a shared kitchen; cross-contact possible.</p></div>
+ <div class="box"><div class="row between"><h1 style="font-size:22px">${esc(it.name)}</h1></div>
+ <div>${it.most?'<span class="tag dark">Most ordered</span>':''}${it.indiv?'<span class="tag">Individual packaging</span>':''}${it.tags.map(t=>`<span class="tag">${t}</span>`).join('')}${it.allergens.length?`<span class="tag" style="border-color:var(--g7)">Contains: ${it.allergens.join(', ')}</span>`:''}</div>
+ <p>${esc(it.desc)||'<span class="muted">No description.</span>'}</p>
+ ${it.serves?`<div class="alert"><b>Portion guidance:</b> serves ${it.serves}${it.serves>=10?'–'+(it.serves+2):''}. For <b>${S.headcount}</b> guests we suggest <b>${recQty(it)}</b> (${$m(recQty(it)*it.price/Math.max(1,S.headcount))}/guest). ${A('Headcount-driven portions')}</div>`:''}
+ <p class="small"><b>Ingredients:</b> as listed above; full list in nutrition feed.</p>
+ ${gs.map((g,gi)=>{const s=c.sel[gi]||{};const used=Object.values(s).reduce((a,b)=>a+b,0);
+  return `<hr><div class="row between"><h3>${g.n}</h3><span class="small muted">${g.t==='radio'?'Required':g.t==='count'?`${used}/${g.max} selected`:'Optional'}</span></div>
+  ${g.o.map((o,oi)=>g.t==='count'?`<div class="row between" style="padding:4px 0"><span>${esc(o[0])}</span><span class="stepper"><button data-act="gstep" data-g="${gi}" data-o="${oi}" data-d="-1">−</button><span>${s[oi]||0}</span><button data-act="gstep" data-g="${gi}" data-o="${oi}" data-d="1" ${used>=g.max?'disabled':''}>+</button></span></div>`
+  :`<label class="chk"><input type="${g.t==='radio'?'radio':'checkbox'}" name="g${gi}" ${s[oi]?'checked':''} data-act="gpick" data-g="${gi}" data-o="${oi}" data-t="${g.t}"><span>${esc(o[0])} ${o[1]?`<span class="muted">+${$m(o[1])}</span>`:''}</span></label>`).join('')}`}).join('')}
+ ${gs.length?A('Modifiers w/ instant price impact'):''}
+ <hr><label class="f">Special instructions<textarea data-bind="cfg.note" placeholder="Allergies, labeling, etc."></textarea></label>
+ <div class="row between"><div><b>Quantity</b><div class="small muted">${it.serves?`Each serves ${it.serves}`:''}</div></div><span class="stepper"><button data-act="cq" data-d="-1">−</button><span>${c.qty}</span><button data-act="cq" data-d="1">+</button></span></div>
+ <div class="box g" style="margin-top:12px"><div class="row between"><span>Item price</span><b>${$m(unit)}</b></div>${sum?`<div class="small muted">${esc(sum)}</div>`:''}<div class="row between"><span>Total (${c.qty}×)</span><b style="font-size:18px">${$m(tot)}</b></div></div>
+ <div class="row" style="margin-top:12px"><button class="btn grow" ${ok?'':'disabled'} data-act="addcart">Add to cart · ${$m(tot)}</button></div>
+ ${ok?'':'<p class="small muted" style="margin-top:6px">Make required selections to continue.</p>'}</div></div></div>`}
+
+function cartBody(){const t=totals(),gap=minGap(),c=cafe();
+ if(!S.cart.length)return `<div class="empty">Your cart is empty.<br><button class="btn sec sm" data-act="drawer">Browse menu</button></div>`;
+ return `${S.cart.map((l,i)=>{const it=byId(l.id);return `<div class="line">${Img(it.name,52)}<div class="grow"><b>${esc(it.name)}</b><div class="small muted">${esc(l.sum||'')}</div>
+ <div class="row" style="margin-top:4px"><span class="stepper"><button data-act="lq" data-i="${i}" data-d="-1">−</button><span>${l.qty}</span><button data-act="lq" data-i="${i}" data-d="1">+</button></span><button class="btn ghost sm" data-act="lrm" data-i="${i}">Remove</button></div></div><b>${$m(l.unit*l.qty)}</b></div>`}).join('')}
+ ${gap>0?`<div class="alert err"><b>${$m(gap)} below the ${$m(c.min)} minimum</b> ${A('Minimum-order enforcement')}<div class="small">Suggested add-ons:</div><div class="row" style="margin-top:6px">${['sweets-0','sides-0','bev-0'].map(id=>`<button class="btn sec sm" data-act="qadd" data-id="${id}">+ ${esc(byId(id).name)} ${$m(byId(id).price)}</button>`).join('')}</div></div>`:''}
+ <p class="small muted" style="margin-top:10px">Cart saved for ${S.user.in?'30 days':'7 days (guest, cookie)'}. ${A('Persistent cart')}</p>`}
+function sumTable(){const t=totals();return `<table class="sum">
+ <tr><td>Subtotal</td><td class="right">${$m(t.sub)}</td></tr>
+ ${t.disc?`<tr><td>Promo (${esc(S.promo.code)})</td><td class="right">−${$m(t.disc)}</td></tr>`:''}
+ <tr><td>Delivery fee</td><td class="right">${t.fee===null?'<span class="muted">enter address</span>':$m(t.fee)}</td></tr>
+ <tr><td>Tax ${S.user.taxEx?'(exempt)':'(est.)'}</td><td class="right">${$m(t.tax)}</td></tr>
+ <tr><td>Tip (${S.tip.mode==='pct'?S.tip.val+'%':'$'})</td><td class="right">${$m(t.tip)}</td></tr>
+ <tr class="t"><td>Total</td><td class="right">${$m(t.total)}</td></tr></table>`}
+function drawerH(){const gap=minGap();return `<div class="ov" style="background:rgba(0,0,0,.3)" data-act="drawer" data-bg="1"></div><div class="drawer"><div class="row between" style="padding:14px 16px;border-bottom:1px solid var(--g3)"><h2 style="margin:0">Your order ${A('Live cart pricing')}</h2><button class="btn ghost" data-act="drawer">Close ✕</button></div>
+ <div class="body">${cartBody()}</div>
+ ${S.cart.length?`<div class="foot">${sumTable()}<button class="btn block" style="margin-top:10px" ${gap>0?'disabled':''} data-act="checkout">${gap>0?'Add '+$m(gap)+' to continue':'Checkout'}</button></div>`:''}</div>`}
+
+function fulModal(){const f=S.ful;const d=f.draft||(f.draft=JSON.parse(JSON.stringify({mode:f.mode,addr:f.addr,cafe:f.cafe,elig:f.elig,date:f.date,slot:f.slot,err:null,okMsg:null})));
+ const c=CAF[d.cafe];const av=avail(c,d.mode,d.date);
+ return `<div class="ov"><div class="modal"><div class="row between"><h2>Delivery or pickup</h2><button class="btn ghost" data-act="closeful">✕</button></div>
+ <div class="row" style="margin-bottom:12px"><span class="chip ${d.mode==='delivery'?'on':''}" data-act="dmode" data-v="delivery">Delivery</span><span class="chip ${d.mode==='pickup'?'on':''}" data-act="dmode" data-v="pickup">Pickup</span>${A('Real-time delivery/pickup availability')}</div>
+ ${d.mode==='delivery'?`<label class="f">ZIP code or full delivery address ${A('Address validation')}<input type="text" placeholder="e.g. 30315 or 123 Main St, Atlanta, GA 30315" value="${esc(d.addr)}" data-bind="ful.draft.addr"></label>
+ <div class="row small"><span class="muted">Try:</span>${['30315','30305','30030','30004','12'].map(z=>`<span class="chip" data-act="dzip" data-v="${z}">${z==='12'?'12 (invalid)':z==='30004'?'30004 (out of range)':z}</span>`).join('')}</div>
+ <button class="btn sec sm" style="margin:10px 0" data-act="validate">Validate address</button>
+ ${d.err?`<div class="alert err"><b>${esc(d.err.t)}</b><div>${esc(d.err.m)}</div>${d.err.alt?`<div class="row" style="margin-top:6px">${d.err.alt.map(k=>`<button class="btn sec sm" data-act="altpick" data-v="${k}">Pickup at ${esc(CAF[k].name)}</button>`).join('')}</div>`:''}${A('Delivery-radius validation')}</div>`:''}
+ ${d.okMsg?`<div class="alert"><b>✓ ${esc(d.okMsg)}</b> ${A('Delivery cafe defaulting')}</div>
+ <label class="f">Fulfilling cafe (override)<select data-bind="ful.draft.cafe">${d.elig.map(k=>`<option value="${k}" ${d.cafe===k?'selected':''}>${CAF[k].name} – ${CAF[k].addr}</option>`).join('')}</select></label>`:''}`
+ :`<h4>Choose a cafe ${A('Cafe selection for pickup')}</h4><div class="col">${Object.keys(CAF).map(k=>`<label class="box chk" style="margin:0"><input type="radio" name="pk" ${d.cafe===k?'checked':''} data-act="pkcafe" data-v="${k}"><span><b>${CAF[k].name}</b><br><span class="small muted">${CAF[k].addr} · ${CAF[k].hours}<br>Lead time ${CAF[k].lead}h · Min order ${$m(CAF[k].min)} · Cutoff ${CAF[k].cutoff}h before</span></span></label>`).join('')}</div>`}
+ <hr><div class="grid2"><label class="f">Date (up to 90 days out) ${A('Scheduled delivery slots')}<input type="date" min="${earliest(c)}" max="${addDays(90)}" value="${d.date}" data-bind="ful.draft.date"></label>
+ <label class="f">Time slot<select data-bind="ful.draft.slot">${SLOTS.map(s=>`<option ${d.slot===s?'selected':''}>${s}</option>`).join('')}</select></label></div>
+ ${av?`<div class="alert err"><b>Unavailable</b><div>${esc(av)}</div>${d.mode==='delivery'?`<button class="btn sec sm" style="margin-top:6px" data-act="dmode" data-v="pickup">Switch to pickup</button>`:''} ${A('Cafe-level lead time')}</div>`:
+ `<div class="box g small"><b>${esc(c.name)}</b> · ${c.addr}<br>Hours: ${c.hours} · Phone ${c.phone}<br>Lead time ${c.lead}h · Min order ${$m(c.min)} · Modify/cancel cutoff ${c.cutoff}h before · ${d.mode==='delivery'?'Delivery fee '+$m(c.fee):'No delivery fee'}</div>`}
+ <div class="row" style="margin-top:14px;justify-content:flex-end"><button class="btn sec" data-act="closeful">Cancel</button><button class="btn" data-act="saveful" ${av||(d.mode==='delivery'&&!d.okMsg)?'disabled':''}>Save</button></div></div></div>`}
+
+function signinModal(){const m=S.modal;const cr=m==='create',fg=m==='forgot',cl=m==='claim';
+ return `<div class="ov"><div class="modal sm"><div class="row between"><h2>${cr?'Create account':fg?'Reset password':cl?'Claim a guest order':'Sign in'}</h2><button class="btn ghost" data-act="modal" data-m="">✕</button></div>
+ ${cl?`<p class="small muted">Use the order ID and email from your confirmation to attach a past guest order to your account.</p><label class="f">Order ID<input type="text" placeholder="TSC-12345" data-bind="claimId"></label><label class="f">Email<input type="email" data-bind="claimEm"></label><button class="btn block" data-act="claim">Claim order</button>`
+ :fg?`<p class="small muted">We'll email a verified reset link. It expires in 30 minutes and works once.</p><label class="f">Email<input type="email"></label><button class="btn block" data-act="forgot">Send reset link</button>`
+ :`${cr?`<label class="f">Full name<input type="text"></label>`:''}<label class="f">Email<input type="email" value="${esc(S.user.email)}"></label><label class="f">Password ${A('Password strength + rate limit')}<input type="password" value="password123">${cr?'<span class="small muted">8+ chars, 1 number, 1 symbol</span>':''}</label>
+ <button class="btn block" data-act="${cr?'create':'login'}">${cr?'Create account':'Sign in'}</button><p class="small" style="margin-top:10px">${cr?'':'<a style="cursor:pointer" data-act="modal" data-m="forgot">Forgot password?</a> · '}<a style="cursor:pointer" data-act="modal" data-m="${cr?'signin':'create'}">${cr?'Have an account? Sign in':'Create account'}</a> · <a style="cursor:pointer" data-act="modal" data-m="claim">Claim guest order</a></p>
+ <p class="small muted">Failed attempts are rate-limited after 5 tries.</p>`}</div></div>`}
+
+function field(label,path,type='text',extra=''){const v=getP(S,path)||'';const e=S.errs[path];return `<label class="f">${label}<input type="${type}" value="${esc(v)}" data-bind="${path}" ${extra}></label>${e?`<div class="err-t">${e}</div>`:''}`}
+function checkoutView(){const t=totals(),f=S.ful,c=cafe(),u=S.user,corp=S.co.type==='corporate';
+ const needApproval=u.corp&&u.role==='buyer'&&t.total>THRESH;
+ const inv=u.corp&&u.po;
+ return `<div class="wrap"><div class="steps"><div>1 Cart</div><div class="on">2 Details &amp; payment</div><div>3 Confirmation</div></div>
+ <div class="layout"><div class="col" style="gap:18px">
+ ${!f.valid?`<div class="alert err"><b>Set delivery or pickup details first.</b> <button class="btn sm" data-act="modal" data-m="ful">Set now</button></div>`:''}
+ <div class="box"><div class="sec-h"><span class="num">1</span><h3 style="margin:0">Contact ${A('Guest checkout / contact capture')}</h3></div>
+ ${!u.in?`<div class="alert small">Checking out as guest. <a style="cursor:pointer;text-decoration:underline" data-act="modal" data-m="signin">Sign in</a> to use saved details.</div>`:''}
+ <div class="grid2">${field('Full name','c.name')}${field('Email','c.email','email')}</div><div class="grid2">${field('Phone','c.phone','tel','placeholder="(555) 555-5555"')}</div>
+ ${!u.in?`<label class="chk"><input type="checkbox" ${S.c.acct?'checked':''} data-bind="c.acct"><span>Create an account with these details <span class="muted">(optional)</span> ${A('Optional account creation')}</span></label>${S.c.acct?`<div style="max-width:300px">${field('Choose password','c.pw','password')}</div>`:''}`:''}</div>
+ <div class="box"><div class="sec-h"><span class="num">2</span><h3 style="margin:0">Order type ${A('Personal vs corporate flag')}</h3></div>
+ <div class="row"><label class="chk"><input type="radio" name="ot" ${!corp?'checked':''} data-act="otype" data-v="personal">Personal</label><label class="chk"><input type="radio" name="ot" ${corp?'checked':''} data-act="otype" data-v="corporate">Corporate</label></div>
+ ${corp?`<div class="grid3">${field('Company name','co.name')}${field('Billing contact name','co.billName')}${field('Billing email','co.billEmail','email')}</div>${u.taxEx?'<p class="small">✓ Tax-exempt certificate on file – taxes zero-rated.</p>':''}`:''}</div>
+ <div class="box"><div class="sec-h"><span class="num">3</span><h3 style="margin:0">${f.mode==='delivery'?'Delivery':'Pickup'} details</h3></div>
+ <div class="grid2"><div><h4>${f.mode==='delivery'?'Deliver to':'Pickup at'}</h4><p>${esc(f.mode==='delivery'?f.addr||'—':c.addr)}</p><p class="small muted">${esc(c.name)} · ${c.phone}</p></div><div><h4>When</h4><p>${f.valid?fdl(f.date)+', '+f.slot:'—'}</p></div></div>
+ ${f.mode==='delivery'?field('Confirm street address / suite / floor','c.addr2','text','placeholder="Street, suite, floor, loading dock"'):''}
+ <label class="f">${f.mode==='delivery'?'Delivery':'Pickup'} instructions<textarea data-bind="c.instr" placeholder="${f.mode==='delivery'?'Loading dock, floor, contact on site':'Door, parking'}"></textarea></label>
+ <button class="btn sec sm" data-act="modal" data-m="ful">Edit details</button></div>
+ <div class="box"><div class="sec-h"><span class="num">4</span><h3 style="margin:0">Payment ${A('PCI card / pre-auth')}</h3></div>
+ <div class="row"><label class="chk"><input type="radio" name="pm" ${S.pay.method==='card'?'checked':''} data-act="pm" data-v="card">Credit / debit card</label>${inv?`<label class="chk"><input type="radio" name="pm" ${S.pay.method==='invoice'?'checked':''} data-act="pm" data-v="invoice">Invoice – monthly net terms ${A('Monthly invoicing')}</label>`:''}</div>
+ ${S.pay.method==='card'?`<div class="box g"><div class="small muted" style="margin-bottom:8px">Processor-hosted secure fields (no card data stored on TSC systems)</div>
+ ${field('Card number','pay.num','text','placeholder="•••• •••• •••• ••••"')}<div class="grid3">${field('Expiry','pay.exp','text','placeholder="MM/YY"')}${field('CVC','pay.cvc','text')}${field('Billing ZIP','pay.zip','text')}</div></div>
+ <p class="small muted">Your card will be pre-authorized for the full amount now and charged the morning of your ${f.mode==='delivery'?'delivery':'pickup'}.</p>`:`<p class="small">Order will be billed on your monthly invoice.</p>`}
+ ${inv&&corp?`<div style="max-width:260px">${field('PO number ('+'PO-approved account)','co.po')}</div>`:''}
+ <label class="f" style="max-width:260px;margin-top:8px">Prototype: simulate payment<select data-bind="pay.result"><option value="success" ${S.pay.result==='success'?'selected':''}>Succeeds</option><option value="fail" ${S.pay.result==='fail'?'selected':''}>Card declined</option></select></label></div>
+ <div class="box"><div class="sec-h"><span class="num">5</span><h3 style="margin:0">Tip &amp; promo ${A('Tip customization / Promo code entry')}</h3></div>
+ <div class="row">${[0,10,15,20].map(p=>`<span class="chip ${!S.tip.custom&&S.tip.val===p?'on':''}" data-act="tip" data-v="${p}">${p===0?'No tip':p+'%'}</span>`).join('')}<span class="chip ${S.tip.custom?'on':''}" data-act="tipc">Custom</span>
+ ${S.tip.custom?`<select style="width:60px" data-bind="tip.mode"><option value="pct" ${S.tip.mode==='pct'?'selected':''}>%</option><option value="usd" ${S.tip.mode==='usd'?'selected':''}>$</option></select><input type="number" min="0" style="width:90px" value="${S.tip.val}" data-bind="tip.val" data-num data-live data-key="tip">`:''}</div>
+ <hr><div class="row"><input type="text" style="max-width:200px" placeholder="Promo code" value="${esc(S.promoIn)}" data-bind="promoIn"><button class="btn sec sm" data-act="promo">Apply</button><span class="small muted">Try TSC10, CAFE25, OLDCODE, USED1</span></div>
+ ${S.promoErr?`<div class="err-t" style="margin-top:6px">${S.promoErr}</div>`:''}${S.promo?`<p class="small">✓ ${esc(S.promo.code)} applied – ${S.promo.label} <a style="cursor:pointer;text-decoration:underline" data-act="unpromo">remove</a></p>`:''}</div>
+ </div>
+ <div class="sticky"><div class="box"><h3>Order summary ${A('Itemized review')}</h3>
+ ${S.cart.map(l=>`<div class="row between small" style="align-items:flex-start;padding:4px 0"><span>${l.qty}× ${esc(byId(l.id).name)}<br><span class="muted">${esc(l.sum||'')}</span></span><span>${$m(l.qty*l.unit)}</span></div>`).join('')}<hr>${sumTable()}
+ ${needApproval?`<div class="alert small"><b>Over ${$m(THRESH)} approval threshold.</b> This order will be sent to your approver before it's placed with the cafe. ${A('Approval workflow')}</div>`:''}
+ ${minGap()>0?`<div class="alert err small">Below cafe minimum by ${$m(minGap())}.</div>`:''}
+ <button class="btn block" style="margin-top:8px" data-act="place" ${minGap()>0?'disabled':''}>${needApproval?'Submit for approval':'Place order · '+$m(t.total)}</button>
+ <p class="small muted" style="margin-top:8px">By placing your order you agree to the cancellation policy: free changes until ${f.valid?cutoffText():'cafe cutoff'}.</p></div></div></div></div>`}
+
+function emails(o){const c=CAF[o.cafe];const cut=o.cutoff;
+ const items=o.lines.map(l=>`<tr><td>${l.qty}× ${esc(byId(l.id).name)}</td><td class="right">${$m(l.qty*l.unit)}</td></tr>`).join('');
+ const body=(kind)=>`<div class="email"><div class="hd"><b>From:</b> Tropical Smoothie Cafe Catering &nbsp; <b>To:</b> ${esc(o.contact.email||'you')}<br><b>Subject:</b> ${kind==='confirm'?'Order '+o.id+' confirmed':kind==='remind'?'Reminder: your catering order is tomorrow':'Receipt – Order '+o.id}</div>
+ <p><b>${kind==='confirm'?'Thanks! Your order is confirmed.':kind==='remind'?'Your order arrives in 24 hours.':'Business receipt'}</b></p>
+ <p class="small">Order ID: ${o.id} · ${o.mode==='delivery'?'Delivery to':'Pickup at'}: ${esc(o.addr)} · ${fd(o.date)}, ${o.slot}</p>
+ ${kind==='receipt'?`<p class="small"><b>Company:</b> ${esc(o.co.name||'—')} · <b>Billing:</b> ${esc(o.co.billName||'—')} · <b>PO #:</b> ${esc(o.co.po||'[PO field]')}</p>`:''}
+ <table class="sum">${items}<tr><td>Subtotal</td><td class="right">${$m(o.t.sub)}</td></tr><tr><td>Delivery</td><td class="right">${$m(o.t.fee||0)}</td></tr><tr><td>Tax${kind==='receipt'?' (breakdown)':''}</td><td class="right">${$m(o.t.tax)}</td></tr><tr><td>Tip</td><td class="right">${$m(o.t.tip)}</td></tr><tr class="t"><td>Total</td><td class="right">${$m(o.t.total)}</td></tr></table>
+ <p class="small"><b>Cafe:</b> ${esc(c.name)} · ${c.phone} · ${c.hours}</p>
+ <p class="small"><b>Policy:</b> modify or cancel free until <b>${cut}</b>.</p>
+ ${kind!=='receipt'?`<p class="small"><a>${kind==='remind'?'Modify or cancel':'View / manage order'}</a> · <a>Contact customer service</a></p>`:''}</div>`;
+ return `<div class="tabs"><a class="${S.emailTab==='confirm'?'on':''}" data-act="etab" data-v="confirm">Confirmation (≤30s)</a><a class="${S.emailTab==='remind'?'on':''}" data-act="etab" data-v="remind">24-hour reminder</a>${o.co.type==='corporate'?`<a class="${S.emailTab==='receipt'?'on':''}" data-act="etab" data-v="receipt">Business receipt</a>`:''}</div>${body(S.emailTab)}`}
+
+function confirmView(){const o=S.order;if(!o)return '<div class="wrap"><div class="empty">No order.</div></div>';const c=CAF[o.cafe];
+ const head={confirmed:['✓ Order confirmed','A confirmation email is on its way.'],payment_failed:['Payment failed – order on hold','Your order is saved and still editable.'],pending:['Awaiting approval','Sent to your approver. It won\'t reach the cafe until approved.'],cancelled:['Order cancelled','A full refund has been issued.']}[o.status];
+ return `<div class="wrap" style="padding-top:18px;padding-bottom:30px"><div class="steps"><div>1 Cart</div><div>2 Details &amp; payment</div><div class="on">3 Confirmation</div></div>
+ <h1>${head[0]}</h1><p class="muted">${head[1]} Order <b>${o.id}</b></p>
+ ${o.status==='payment_failed'?`<div class="alert err"><b>Card declined.</b> Retry with the same or a different payment method. ${A('Graceful payment failure')}
+ <div class="row" style="margin:8px 0"><button class="btn sm" data-act="retry">Retry payment</button><button class="btn sec sm" data-act="chgpay">Use a different method</button></div>
+ <div class="small"><b>Notifications:</b> customer emailed + in-app banner · cafe alerted via POS/dashboard/SMS (${esc(c.name)} will call you).<br><b>Audit log:</b><br>${o.log.map(l=>'• '+l).join('<br>')}</div></div>`:''}
+ <div class="layout"><div class="col" style="gap:14px">
+ <div class="box"><h3>Order details</h3><div class="grid2"><div><h4>${o.mode==='delivery'?'Delivery':'Pickup'}</h4><p>${fdl(o.date)}<br>${o.slot}<br>${esc(o.addr)}</p></div><div><h4>Fulfilling cafe</h4><p>${esc(c.name)}<br>${c.phone}<br>${c.hours}</p></div></div>
+ <h4>${o.mode==='delivery'?'Delivery':'Pickup'} instructions ${A('Cafe-specific instructions')}</h4><p class="small">${esc(o.instr||'—')} · Cafe contact: ${c.phone}. ${o.mode==='pickup'?'Pickup at main counter door; parking in front lot.':'Cafe will call on arrival.'}</p>
+ <table>${o.lines.map(l=>`<tr><td>${l.qty}× ${esc(byId(l.id).name)}<div class="small muted">${esc(l.sum||'')}</div></td><td class="right">${$m(l.qty*l.unit)}</td></tr>`).join('')}</table></div>
+ ${o.status==='confirmed'?`<div class="box"><h3>Modify or cancel ${A('Modify / cancel before cutoff')}</h3><p class="small">Free changes and full refund until <b>${o.cutoff}</b>.</p>
+ <div class="row"><button class="btn sec" data-act="modmodal">Modify order</button><button class="btn sec" data-act="cancel">Cancel &amp; refund</button></div></div>`:''}
+ <div class="box"><h3>Emails ${A('Confirmation + 24h reminder emails')}</h3>${emails(o)}</div></div>
+ <div class="sticky"><div class="box"><h3>Payment summary</h3><table class="sum"><tr><td>Subtotal</td><td class="right">${$m(o.t.sub)}</td></tr><tr><td>Delivery</td><td class="right">${$m(o.t.fee||0)}</td></tr><tr><td>Tax</td><td class="right">${$m(o.t.tax)}</td></tr><tr><td>Tip</td><td class="right">${$m(o.t.tip)}</td></tr><tr class="t"><td>Total</td><td class="right">${$m(o.t.total)}</td></tr></table>
+ <p class="small muted">${o.status==='pending'?'No charge until approved.':o.pay==='invoice'?'Billed on monthly invoice.':'Card pre-authorized. Captured the morning of '+fd(o.date)+'.'}</p></div>
+ ${!S.user.in?`<div class="box g" style="margin-top:12px"><h4>Keep this order</h4><p class="small">Create an account to track and reorder. Use order ID ${o.id} to claim later.</p><button class="btn block sm" data-act="modal" data-m="create">Create account</button></div>`:''}
+ <button class="btn sec block" style="margin-top:12px" data-act="go" data-v="menu">Back to catering menu</button></div></div></div>`}
+
+function accountView(){const u=S.user;const T=[['orders','Orders'],['profile','Profile'],['wallet','Payment & addresses'],['prefs','Communication'],['privacy','Privacy']];
+ let b='';
+ if(S.tab==='orders')b=`<div class="row between"><h3>Order history ${A('Order history & reorder')}</h3><button class="btn sec sm" data-act="modal" data-m="claim">Claim guest order</button></div><table><tr><th>Order</th><th>Date</th><th>Cafe</th><th>Guests</th><th>Total</th><th>Status</th><th></th></tr>${S.orders.map(o=>`<tr><td>${o.id}</td><td>${fd(o.date)}</td><td>${esc(CAF[o.cafe].name)}</td><td>${o.guests}</td><td>${$m(o.total)}</td><td>${o.status}</td><td><button class="btn sm" data-act="reorder" data-id="${o.id}">Reorder</button> <button class="btn sec sm" data-act="dup" data-id="${o.id}">Duplicate…</button></td></tr>`).join('')}</table>`;
+ if(S.tab==='profile')b=`<h3>Baseline profile ${A('Baseline profile')}</h3><div class="grid2"><label class="f">Name<input type="text" value="${esc(u.name)}" data-bind="user.name"></label><label class="f">Email<input type="email" value="${esc(u.email)}" data-bind="user.email"></label><label class="f">Phone<input type="tel" value="${esc(u.phone)}" data-bind="user.phone"></label><label class="f">Primary delivery address<input type="text" placeholder="Street, city, ZIP"></label></div><button class="btn" data-act="saved">Save changes</button>`;
+ if(S.tab==='wallet')b=`<h3>Saved payment methods ${A('Wallet (tokenized)')}</h3><div class="box row between"><span>Visa •••• 4242 · exp 09/28</span><span><button class="btn sec sm">Edit</button> <button class="btn ghost sm">Remove</button></span></div><button class="btn sec sm" style="margin:10px 0">+ Add card</button><hr><h3>Address book</h3><div class="box row between"><span>Home office – 000 Main St, Atlanta, GA 30315 <span class="tag">Primary</span></span><button class="btn sec sm">Edit</button></div><button class="btn sec sm" style="margin-top:10px">+ Add address</button>`;
+ if(S.tab==='prefs')b=`<h3>Communication preferences ${A('Per-channel / per-topic')}</h3><table><tr><th>Topic</th><th>Email</th><th>SMS</th><th>Push</th></tr>${[['t','Transactional (order status)'],['p','Promotional'],['f','Feedback requests']].map(r=>`<tr><td>${r[1]}</td>${['em','sms','pu'].map(ch=>`<td><input type="checkbox" ${S.prefs[ch+'_'+r[0]]?'checked':''} data-bind="prefs.${ch}_${r[0]}"></td>`).join('')}</tr>`).join('')}</table>`;
+ if(S.tab==='privacy')b=`<h3>Delete my account ${A('Data retention & deletion')}</h3><p>We'll remove your name, email, phone, addresses and saved payment methods from your profile and past orders. Order records (ID, date, items, amounts, cafe, taxes) are kept for accounting and audit but anonymized with no reverse lookup.</p><p class="small muted">Requests are acknowledged within X business days and completed within Y days; you'll get a confirmation email when complete. Guests: contact customer service.</p>${S.delConfirm?`<div class="alert err"><b>Submit deletion request?</b> This can't be undone.<div class="row" style="margin-top:8px"><button class="btn" data-act="deldo">Yes, delete my account</button><button class="btn sec" data-act="delcancel">Cancel</button></div></div>`:`<button class="btn sec" data-act="delask">Request account deletion</button>`}`;
+ return `<div class="wrap" style="padding:18px 20px 30px"><h1>My account</h1><div class="tabs">${T.map(t=>`<a class="${S.tab===t[0]?'on':''}" data-act="tab" data-v="${t[0]}">${t[1]}</a>`).join('')}</div>${b}</div>`}
+
+function companyView(){const T=[['orders','Company orders'],['users','Users & roles'],['approvals','Approvals'],['billing','Billing & tax']];let b='';
+ if(S.ctab==='orders')b=`<div class="row between"><h3>All orders across organization ${A('Company order history & export')}</h3><span><button class="btn sec sm" data-act="exp" data-f="CSV">Export CSV</button> <button class="btn sec sm" data-act="exp" data-f="XLSX">Export XLSX</button></span></div><table><tr><th>Order</th><th>Date</th><th>Placed by</th><th>Cafe</th><th>PO #</th><th>Total</th><th>Status</th></tr>${S.orders.map(o=>`<tr><td>${o.id}</td><td>${fd(o.date)}</td><td>${esc(S.user.name)}</td><td>${esc(CAF[o.cafe].name)}</td><td>${o.po||'—'}</td><td>${$m(o.total)}</td><td>${o.status}</td></tr>`).join('')}</table>`;
+ if(S.ctab==='users')b=`<div class="row between"><h3>Users &amp; roles ${A('Multi-user corporate roles')}</h3><button class="btn sm" data-act="invite">+ Invite user</button></div><table><tr><th>Name</th><th>Email</th><th>Role</th><th>Permissions</th></tr>${S.users.map((x,i)=>`<tr><td>${x.n}</td><td>${x.e}</td><td><select style="width:120px" data-bind="users.${i}.r">${['Buyer','Approver','Admin'].map(r=>`<option ${x.r===r?'selected':''}>${r}</option>`).join('')}</select></td><td class="small muted">${{Buyer:'Order; submit for approval',Approver:'Order + approve over-threshold',Admin:'All + reporting, billing, users'}[x.r]}</td></tr>`).join('')}</table>`;
+ if(S.ctab==='approvals')b=`<h3>Approval workflow ${A('Spend threshold approvals')}</h3><p class="small">Orders over <b>${$m(THRESH)}</b> require approver sign-off before reaching the cafe.</p><table><tr><th>Order</th><th>Requested by</th><th>Amount</th><th>Status</th><th></th></tr>${S.approvals.map((a,i)=>`<tr><td>${a.id}</td><td>${a.by}</td><td>${$m(a.amt)}</td><td>${a.st}</td><td>${a.st==='Pending'?`<button class="btn sm" data-act="appr" data-i="${i}" data-v="Approved">Approve</button> <button class="btn sec sm" data-act="appr" data-i="${i}" data-v="Rejected">Reject</button>`:''}</td></tr>`).join('')}</table>`;
+ if(S.ctab==='billing')b=`<div class="grid2"><div class="box"><h3>PO / net-terms billing ${A('PO support + monthly invoicing')}</h3><p class="small">Status: <span class="tag dark">${S.user.po?'Approved':S.po==='pending'?'Pending TSC Finance review':S.po==='rejected'?'Rejected':'Not requested'}</span></p>${S.user.po?'<p class="small">Buyers can enter a PO number at checkout and pay by monthly invoice. Backup card on file: Visa •••• 4242.</p>':S.po==='pending'?'<p class="small muted">Credit check, signed terms and net terms in review.</p>':`<button class="btn sm" data-act="porequest">Request PO / net terms</button>`}</div>
+ <div class="box"><h3>Tax-exempt certificate ${A('Tax-exempt handling')}</h3><p class="small">Status: <span class="tag dark">${S.user.taxEx?'Approved – taxes zero-rated':S.taxcert==='pending'?'Pending review':'None on file'}</span></p>${S.user.taxEx?'<p class="small">Expires 12/31/2027 · renewal reminder 60 days prior.</p>':S.taxcert==='pending'?`<p class="small muted">${esc(S.certFile)} submitted.</p>`:`<div class="row"><button class="btn sec sm" data-act="upload">Upload certificate</button></div>`}</div></div>`;
+ return `<div class="wrap" style="padding:18px 20px 30px"><h1>Company account</h1><div class="tabs">${T.map(t=>`<a class="${S.ctab===t[0]?'on':''}" data-act="ctab" data-v="${t[0]}">${t[1]}</a>`).join('')}</div>${b}</div>`}
+
+function dupModal(){const o=S.dup;return `<div class="ov"><div class="modal sm"><h2>Duplicate ${o.id}</h2><p class="small muted">New draft – edit before submitting. ${A('Duplicate past order')}</p><label class="f">Headcount<input type="number" value="${o.hc}" data-bind="dup.hc" data-num></label><label class="f">Date<input type="date" min="${addDays(2)}" value="${o.date}" data-bind="dup.date"></label><label class="f">Delivery address<input type="text" value="${esc(o.addr)}" data-bind="dup.addr"></label><div class="row"><button class="btn" data-act="dupgo">Create draft</button><button class="btn sec" data-act="modal" data-m="">Cancel</button></div></div></div>`}
+function modMod(){return `<div class="ov"><div class="modal sm"><h2>Modify order</h2><label class="f">Headcount<input type="number" value="${S.headcount}" data-bind="headcount" data-num></label><label class="f">Notes<textarea></textarea></label><p class="small muted">Items can be edited in cart. Updated confirmation email will be sent.</p><div class="row"><button class="btn" data-act="modsave">Save changes</button><button class="btn sec" data-act="modal" data-m="">Close</button></div></div></div>`}
+
+function ctlPanel(){const u=S.user;return `<div id="ctl"><header data-act="ctltoggle"><b>Prototype controls</b><span>${S.ctl?'–':'+'}</span></header>${S.ctl?`<div class="b">
+ <label><input type="checkbox" ${S.ann?'checked':''} data-bind="ann"> Show requirement annotations</label><hr>
+ <label><input type="checkbox" ${u.in?'checked':''} data-act="toggleIn"> Signed in</label>
+ <label><input type="checkbox" ${u.corp?'checked':''} data-act="toggleCorp"> Corporate account</label>
+ <label>Role <select data-bind="user.role"><option>buyer</option><option ${u.role==='approver'?'selected':''}>approver</option><option ${u.role==='admin'?'selected':''}>admin</option></select></label>
+ <label><input type="checkbox" ${u.po?'checked':''} data-bind="user.po"> PO-approved</label>
+ <label><input type="checkbox" ${u.taxEx?'checked':''} data-bind="user.taxEx"> Tax-exempt approved</label><hr>
+ <b>Jump to</b><div class="row" style="margin-top:6px"><button class="btn sec sm" data-act="go" data-v="menu">Menu</button><button class="btn sec sm" data-act="demo">Demo cart → checkout</button><button class="btn sec sm" data-act="go" data-v="account">Account</button><button class="btn sec sm" data-act="go" data-v="company">Company</button></div></div>`:''}</div>`}
+
+
+
+/* ============ SCROLL SPY: highlight the category chip for the section in view ============ */
+function spy(){if(S.mode!=='proto'||S.view!=='menu'||(S._lock&&Date.now()<S._lock))return;
+ const secs=Array.from(document.querySelectorAll('section[id^="cat-"]'));if(!secs.length)return;
+ const bar=document.querySelector('.catbar');const line=(bar?bar.getBoundingClientRect().bottom:0)+24;
+ let cur=secs[0];for(const x of secs){if(x.getBoundingClientRect().top<=line)cur=x;else break}
+ if(window.innerHeight+window.scrollY>=document.documentElement.scrollHeight-4)cur=secs[secs.length-1];
+ const id=cur.id.slice(4);S.cat=id;
+ document.querySelectorAll('.catbar .chip').forEach(c=>{const on=c.dataset.v===id;if(c.classList.contains('on')!==on)c.classList.toggle('on',on);
+  if(on&&bar&&bar.scrollTo){const l=c.offsetLeft-bar.clientWidth/2+c.offsetWidth/2;if(Math.abs(bar.scrollLeft-l)>40)bar.scrollTo({left:Math.max(0,l),behavior:'smooth'})}})}
+let spyRaf=0;
+window.addEventListener('scroll',()=>{if(spyRaf)return;spyRaf=requestAnimationFrame(()=>{spyRaf=0;spy()})},{passive:true});
+
+/* ============ CANVAS VIEW ============ */
+const DEMO=()=>[{id:'trays-0',qty:3,sel:{},unit:101.09,sum:'',note:''},{id:'sweets-0',qty:25,sel:{},unit:1.99,sum:'',note:''}];
+function fulOK(){Object.assign(S.ful,{mode:'delivery',addr:'30315',cafe:'hank',elig:['hank','midtown'],valid:true,draft:null})}
+function fillCheckout(){S.cart=DEMO();fulOK();S.c={name:'Jordan Rivera',email:'jordan@example.com',phone:'(404) 555-0123',addr2:'000 Main St, Floor 4',instr:'Loading dock, 4th floor',acct:false,pw:''};S.co={type:'corporate',name:'Acme Co.',billName:'Sam Patel',billEmail:'ap@acme.example',po:''};S.pay.num='4242424242424242';S.pay.exp='09/28';S.pay.cvc='123'}
+const BOARDS=[
+{t:'1 Menu',row:1,set(){S.view='menu';S.cat='packs'}},
+{t:'2 Configure item',row:1,set(){S.view='item';S.cfg={id:'byo-0',qty:3,sel:{0:{0:2,1:1,5:1,6:2}},note:''}}},
+{t:'3 Delivery or pickup',row:1,set(){S.view='menu';S.ful.draft={mode:'delivery',addr:'30315',cafe:'hank',elig:['hank','midtown'],date:addDays(7),slot:'11:30 AM',err:null,okMsg:'Address verified. Nearest catering cafe: Hank Aaron Dr SE.'};S.modal='ful'}},
+{t:'3b Outside delivery radius',row:1,set(){S.view='menu';S.ful.draft={mode:'delivery',addr:'30004',cafe:'hank',elig:[],date:addDays(7),slot:'11:30 AM',err:{t:'Outside delivery radius',m:'30004 is outside the catering radius of every delivery-enabled cafe. Try pickup or a different address.',alt:['hank','midtown']},okMsg:null};S.modal='ful'}},
+{t:'4 Cart',row:1,set(){S.view='menu';S.cart=DEMO();fulOK();S.drawer=true}},
+{t:'5 Checkout',row:1,set(){fillCheckout();S.view='checkout'}},
+{t:'6 Confirmation',row:2,set(){fillCheckout();S.pay.result='success';ACT.place()}},
+{t:'6b Payment failed',row:2,set(){fillCheckout();S.pay.result='fail';ACT.place()}},
+{t:'7 Account orders',row:2,set(){S.user.in=true;S.view='account';S.tab='orders'}},
+{t:'8 Company approvals',row:2,set(){S.user.in=true;S.user.corp=true;S.user.po=true;S.view='company';S.ctab='approvals'}}
+];
+function boardHTML(b){const snap=JSON.parse(JSON.stringify(S));const st=window.scrollTo;window.scrollTo=()=>{};let h='';
+ try{S._noSave=true;S.mode='proto';S.modal=null;S.drawer=false;b.set();
+  const views={menu:menuView,item:itemView,checkout:checkoutView,confirm:confirmView,account:accountView,company:companyView};
+  h=header()+views[S.view]()+(S.drawer?drawerH():'')+(S.modal==='ful'?fulModal():'')}
+ catch(e){h='<div class="empty">Board failed: '+esc(e.message)+'</div>'}
+ for(const k of Object.keys(S))delete S[k];Object.assign(S,snap);window.scrollTo=st;return h}
+function canvasView(){const z=S.zoom;const rows=[[1,'Browse, build and check out'],[2,'After checkout']];
+ return `<div class="cv"><div class="cv-bar"><div><h1>Canvas</h1><p class="muted small" style="margin:0">Every screen in the flow. Click a board to open it in the prototype.</p></div><div class="row" style="gap:8px"><span class="small muted">Board size</span>${[[.3,'Small'],[.4,'Medium'],[.6,'Large']].map(o=>`<button class="chip ${z===o[0]?'on':''}" data-act="zoom" data-v="${o[0]}">${o[1]}</button>`).join('')}</div></div>
+ ${rows.map(r=>`<h2 class="cv-t">${r[1]}</h2><div class="cv-row">${BOARDS.map((b,i)=>b.row!==r[0]?'':`<figure class="cv-b"><figcaption>${b.t}</figcaption><div class="cv-f" style="width:${1100*z}px"><div class="cv-in" style="transform:scale(${z})">${boardHTML(b)}</div><button class="cv-open" data-act="openboard" data-i="${i}" aria-label="Open ${b.t} in the prototype"></button><span class="cv-hint">Open in prototype</span></div></figure>`).join('')}</div>`).join('')}</div>`}
+function fitBoards(){const z=S.zoom;document.querySelectorAll('.cv-f').forEach(f=>{const i=f.firstElementChild;f.style.height=(Math.min(i.offsetHeight,1300)*z)+'px'})}
+function modeToggle(){return `<div class="mode" role="group" aria-label="View"><button class="${S.mode==='proto'?'on':''}" data-act="mode" data-v="proto">Prototype</button><button class="${S.mode==='canvas'?'on':''}" data-act="mode" data-v="canvas">Canvas</button></div>`}
+
+function render(){const ae=document.activeElement;const key=ae&&ae.dataset&&ae.dataset.key;const pos=ae&&ae.selectionStart;
+ document.body.classList.toggle('ann-on',S.ann);
+ if(S.mode==='canvas'){document.getElementById('app').innerHTML=canvasView()+modeToggle()+(S.toast?`<div id="toast">${S.toast}</div>`:'');fitBoards();return}
+ const views={menu:menuView,item:itemView,checkout:checkoutView,confirm:confirmView,account:accountView,company:companyView};
+ let m='';if(S.modal==='ful')m=fulModal();else if(['signin','create','forgot','claim'].includes(S.modal))m=signinModal();else if(S.modal==='dup')m=dupModal();else if(S.modal==='mod')m=modMod();
+ document.getElementById('app').innerHTML=header()+views[S.view]()+`<footer class="site-footer"><div class="wrap"><div class="cols"><div><div class="logo" style="color:var(--inverse)"><i style="background:var(--inverse);color:var(--ink)">TSC</i>Tropical Smoothie Cafe</div><p class="small" style="margin-top:12px;color:var(--border-stronger)">Catering prototype · menu and pricing from EZCater (572 Hank Aaron Dr SE, Atlanta). Other cafes, phone numbers, nutrition, allergen and dietary data are placeholders.</p></div><div><h5>About us</h5><a>Our story</a><a>Careers</a></div><div><h5>Food and services</h5><a>Menu</a><a>Catering</a><a>Gift cards</a></div><div><h5>Support</h5><a>Contact us</a><a>FAQ</a></div><div><h5>Legal</h5><a>Accessibility</a><a>Terms of use</a><a>Privacy policy</a></div></div><div class="legal">©2026 TSC Franchisor, LLC</div></div></footer>`+(S.drawer?drawerH():'')+m+ctlPanel()+modeToggle()+(S.toast?`<div id="toast">${S.toast}</div>`:'');
+ if(key){const el=document.querySelector(`[data-key="${key}"]`);if(el){el.focus();try{el.setSelectionRange(pos,pos)}catch(e){}}}
+ if(S.mode==='proto'&&S.view==='menu')spy()}
+
+/* ============ ACTIONS ============ */
+const ACT={
+go:d=>{S.view=d.v;S.drawer=false;S.modal=null;window.scrollTo(0,0)},
+drawer:(d,e)=>{S.drawer=!S.drawer},
+modal:d=>{S.modal=d.m||null;if(d.m==='ful')S.ful.draft=null},
+item:d=>openItem(d.id),
+occ:d=>{S.occ=d.v},diet:d=>{const i=S.diet.indexOf(d.v);i<0?S.diet.push(d.v):S.diet.splice(i,1)},
+hc:d=>{S.headcount=+d.v},clear:()=>{S.occ='all';S.diet=[]},
+cat:d=>{S.cat=d.v;S._lock=Date.now()+900;render();const el=document.getElementById('cat-'+d.v);if(el)el.scrollIntoView({behavior:'smooth'});setTimeout(spy,1000);return 1},
+cq:d=>{S.cfg.qty=Math.max(1,S.cfg.qty+ +d.d)},
+gstep:d=>{const s=S.cfg.sel[d.g]=S.cfg.sel[d.g]||{};s[d.o]=Math.max(0,(s[d.o]||0)+ +d.d)},
+gpick:(d,e)=>{const s=S.cfg.sel[d.g]=S.cfg.sel[d.g]||{};if(d.t==='radio'){S.cfg.sel[d.g]={[d.o]:1}}else{s[d.o]=e.target.checked?1:0}},
+mode:d=>{if(d.v==='canvas')S._yp=window.scrollY;S.mode=d.v;render();window.scrollTo(0,d.v==='proto'?(S._yp||0):0);return 1},
+zoom:d=>{S.zoom=+d.v},
+openboard:d=>{const b=BOARDS[+d.i];S.mode='proto';b.set();window.scrollTo(0,0)},
+crumb:d=>{S.view="menu";S.drawer=false;S.cat=d.cat||null;render();const el=d.cat&&document.getElementById("cat-"+d.cat);if(el)el.scrollIntoView();else window.scrollTo(0,0);return 1},
+addcart:()=>addToCart(),qadd:d=>quickAdd(d.id,1),
+lq:d=>{const l=S.cart[+d.i];l.qty=Math.max(1,l.qty+ +d.d);saveCart()},lrm:d=>{S.cart.splice(+d.i,1);saveCart()},
+checkout:()=>{S.drawer=false;S.view='checkout';const u=S.user;if(u.in){S.c.name=S.c.name||u.name;S.c.email=S.c.email||u.email;S.c.phone=S.c.phone||u.phone}
+ if(u.corp)S.co.type='corporate';if(!S.ful.valid)S.modal='ful';window.scrollTo(0,0)},
+dmode:d=>{const f=S.ful.draft;f.mode=d.v;f.err=null;f.okMsg=null;if(d.v==='pickup'&&!f.cafe)f.cafe='hank'},
+dzip:d=>{S.ful.draft.addr=d.v},
+pkcafe:d=>{S.ful.draft.cafe=d.v},
+altpick:d=>{const f=S.ful.draft;f.mode='pickup';f.cafe=d.v;f.err=null},
+validate:()=>{const f=S.ful.draft;const a=f.addr.trim();const z=(a.match(/\b\d{5}\b/)||[])[0];f.err=null;f.okMsg=null;
+ if(!z||a.length<5){f.err={t:'Invalid address',m:'Enter a 5-digit ZIP or a full street address including ZIP.'};return}
+ if(a.length>5&&!/\d+\s+\w+/.test(a)){f.err={t:'Address not found',m:'We couldn\'t verify this address. Check spelling and try again.'};return}
+ const e=ZIPS[z];if(!e||!e.length){f.err={t:'Outside delivery radius',m:`${z} is outside the catering radius of every delivery-enabled cafe. Try pickup or a different address.`,alt:['hank','midtown']};return}
+ f.elig=e;f.cafe=e[0];f.okMsg=`Address verified. Nearest catering cafe: ${CAF[e[0]].name}.`},
+saveful:()=>{const f=S.ful,d=f.draft;Object.assign(f,{mode:d.mode,addr:d.addr,cafe:d.cafe,elig:d.elig,date:d.date,slot:d.slot,valid:true,draft:null});S.modal=null},
+closeful:()=>{S.ful.draft=null;S.modal=null},
+tip:d=>{S.tip={mode:'pct',val:+d.v,custom:false}},tipc:()=>{S.tip.custom=true},
+promo:()=>{const c=S.promoIn.trim().toUpperCase();const p=PROMOS[c];S.promoErr='';if(!p)S.promoErr='Code not recognized.';else if(p.err)S.promoErr=p.err;else if(p.cafe&&p.cafe!==S.ful.cafe)S.promoErr='This code is only valid at '+CAF[p.cafe].name+'.';else S.promo={...p,code:c}},
+unpromo:()=>{S.promo=null;S.promoIn=''},
+otype:d=>{S.co.type=d.v},pm:d=>{S.pay.method=d.v},
+place:()=>{const e={};const c=S.c,u=S.user;if(!c.name)e['c.name']='Name is required';if(!/\S+@\S+\.\S+/.test(c.email))e['c.email']='Enter a valid email';if(c.phone.replace(/\D/g,'').length!==10)e['c.phone']='Enter a 10-digit phone number';
+ if(S.ful.mode==='delivery'&&!c.addr2&&!S.ful.addr)e['c.addr2']='Address required';
+ if(S.co.type==='corporate'){if(!S.co.name)e['co.name']='Required';if(!S.co.billName)e['co.billName']='Required';if(!/\S+@\S+/.test(S.co.billEmail))e['co.billEmail']='Valid email required'}
+ if(S.pay.method==='card'){if(S.pay.num.replace(/\D/g,'').length<13)e['pay.num']='Enter a valid card number';if(!S.pay.exp)e['pay.exp']='Required';if(!S.pay.cvc)e['pay.cvc']='Required'}
+ if(!S.ful.valid){S.modal='ful';return}
+ S.errs=e;if(Object.keys(e).length){return}
+ const t=totals();const cf=cafe();const id='TSC-'+(48400+Math.floor(Math.random()*500));
+ const needApp=u.corp&&u.role==='buyer'&&t.total>THRESH;
+ const status=needApp?'pending':(S.pay.method==='card'&&S.pay.result==='fail')?'payment_failed':'confirmed';
+ S.order={id,status,t,lines:S.cart.map(l=>({...l})),cafe:S.ful.cafe,mode:S.ful.mode,addr:S.ful.mode==='delivery'?(c.addr2||S.ful.addr):cf.addr,date:S.ful.date,slot:S.ful.slot,instr:c.instr,contact:{...c},co:{...S.co},pay:S.pay.method,cutoff:cutoffText(),
+  log:status==='payment_failed'?['Pre-authorization declined ('+new Date().toLocaleTimeString()+')','Customer notified: email + in-app','Cafe alert sent: POS notification to '+cf.name,'Retry attempts: 0']:[]};
+ if(status!=='payment_failed'){S.orders.unshift({id,date:S.ful.date,slot:S.ful.slot,mode:S.ful.mode,cafe:S.ful.cafe,guests:S.headcount,total:t.total,status:status==='pending'?'Pending approval':'Confirmed',lines:S.cart.map(l=>({...l})),guest:!u.in,po:S.co.po});if(needApp)S.approvals.unshift({id,by:u.name,amt:t.total,st:'Pending'});S.cart=[];saveCart()}
+ S.emailTab='confirm';S.view='confirm';window.scrollTo(0,0)},
+retry:()=>{const o=S.order;o.log.push('Retry succeeded ('+new Date().toLocaleTimeString()+')');o.status='confirmed';S.orders.unshift({id:o.id,date:o.date,slot:o.slot,mode:o.mode,cafe:o.cafe,guests:S.headcount,total:o.t.total,status:'Confirmed',lines:o.lines,guest:!S.user.in});S.cart=[];saveCart();S.pay.result='success'},
+chgpay:()=>{S.pay.result='success';S.view='checkout'},
+cancel:()=>{S.order.status='cancelled';const x=S.orders.find(o=>o.id===S.order.id);if(x)x.status='Cancelled'},
+modmodal:()=>{S.modal='mod'},modsave:()=>{S.modal=null;S.toast='Order updated – new confirmation email sent'},
+etab:d=>{S.emailTab=d.v},
+tab:d=>{S.tab=d.v},ctab:d=>{S.ctab=d.v},
+reorder:d=>{const o=S.orders.find(x=>x.id===d.id);o.lines.forEach(l=>S.cart.push({...l}));saveCart();S.drawer=true;S.view='menu'},
+dup:d=>{const o=S.orders.find(x=>x.id===d.id);S.dup={id:o.id,hc:o.guests,date:addDays(7),addr:S.ful.addr||'000 Main St, Atlanta, GA 30315'};S.modal='dup'},
+dupgo:()=>{const o=S.orders.find(x=>x.id===S.dup.id);o.lines.forEach(l=>S.cart.push({...l}));S.headcount=+S.dup.hc;S.ful.date=S.dup.date;S.ful.addr=S.dup.addr;saveCart();S.modal=null;S.drawer=true;S.view='menu'},
+signout:()=>{S.user.in=false;S.view='menu'},
+login:()=>{S.user.in=true;S.modal=null},create:()=>{S.user.in=true;S.modal=null;S.toast='Account created'},
+forgot:()=>{S.modal=null;S.toast='Reset link sent (expires in 30 min, single use)'},
+claim:()=>{S.modal=null;S.toast='Order claimed and attached to your account'},
+toggleIn:(d,e)=>{S.user.in=e.target.checked},toggleCorp:(d,e)=>{S.user.corp=e.target.checked;if(e.target.checked)S.user.in=true},
+ctltoggle:()=>{S.ctl=!S.ctl},
+delask:()=>{S.delConfirm=true},delcancel:()=>{S.delConfirm=false},deldo:()=>{S.delConfirm=false;S.toast='Deletion request received – confirmation email to follow'},
+saved:()=>{S.toast='Profile saved'},exp:d=>{S.toast='Exporting '+d.f+'…'},invite:()=>{S.users.push({n:'New user',e:'invite@example.com',r:'Buyer'});S.toast='Invitation sent'},
+appr:d=>{S.approvals[+d.i].st=d.v},porequest:()=>{S.po='pending'},upload:()=>{S.taxcert='pending';S.certFile='tax-exempt-cert.pdf'},
+demo:()=>{if(!S.cart.length){S.cart=[{id:'trays-0',qty:3,sel:{},unit:101.09,sum:'',note:''},{id:'sweets-0',qty:25,sel:{},unit:1.99,sum:'',note:''}]}
+ S.ful.mode='delivery';S.ful.addr='30315';S.ful.cafe='hank';S.ful.elig=['hank','midtown'];S.ful.valid=true;ACT.checkout({})}
+};
+document.addEventListener('click',e=>{const t=e.target.closest('[data-act]');if(!t)return;if(t.tagName==='INPUT'&&(t.type==='checkbox'||t.type==='radio')&&e.type==='click'&&false)return;
+ if(t.dataset.bg&&e.target!==t)return;if(t.tagName==='INPUT')return;
+ const r=ACT[t.dataset.act]&&ACT[t.dataset.act](t.dataset,e);if(r!==1)render()});
+document.addEventListener('change',e=>{const t=e.target;
+ if(t.dataset.act&&t.tagName==='INPUT'){ACT[t.dataset.act](t.dataset,e);render();return}
+ if(t.dataset.bind){bind(t);if(!t.dataset.live)render()}});
+document.addEventListener('input',e=>{const t=e.target;if(t.dataset.bind&&(t.tagName==='TEXTAREA'||['text','email','tel','password','number'].includes(t.type))){bind(t);if(t.dataset.live)render()}});
+function bind(t){let v=t.type==='checkbox'?t.checked:t.dataset.num!==undefined?(+t.value||0):t.value;const p=t.dataset.bind;
+ if(p.startsWith('users.')){const [,i,k]=p.split('.');S.users[i][k]=v;return}
+ if(p==='claimId'||p==='claimEm'){S[p]=v;return}
+ if(p==='headcount'&&v<1)v=1;if(p==='tip.val'){S.tip.val=v;return}
+ if(p==='ann'){S.ann=v;return}
+ setP(S,p,v)}
+render();
+</script>
+</body>
+</html>
